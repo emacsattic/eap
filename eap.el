@@ -206,7 +206,7 @@ k			Keep window small
 Q			Quit EAP		M-x eaq
 "
   (eap-define-common-keys eap-playlist-mode-map)
-  (set (make-local-variable 'font-lock-defaults) '(eap-playlist-font-lock-keywords nil t))
+  (setq font-lock-defaults '(eap-playlist-font-lock-keywords t))
   (font-lock-mode))
 
 (defun eap-define-common-keys (mode)
@@ -220,7 +220,7 @@ Q			Quit EAP		M-x eaq
   (define-key mode "Q"     'apq)
   ;; fixed volume keys
   (define-key mode "0"     'ap0) ; All these 'ap*' functions began life anonymously
-  (define-key mode "-"     'ap-) ; (defined here).  They were exposed later according to
+  (define-key mode "-"     'ap-) ; (defined here).  They went global later according to
   (define-key mode "="     'ap=) ; a simple naming convention and can be found at the
   ;; dired keys			   bottom of this file
   (define-key mode "m"     'apm)
@@ -361,14 +361,25 @@ Q			Quit EAP		M-x eaq
 	  (eap-volume-change eap-volume-restore))))))
 
 ;;; top level entry to eap
+;;;
+;;; it would be nice to stop if eap-startup-hook returns nil
+;;; but as this code snippet demonstrates run-hooks always returns nil:
+;;; 
+;;;   (setq test-hooks-hook '())
+;;;   (add-hook 'test-hooks-hook (lambda () t))
+;;;   (run-hooks 'test-hooks-hook)
+;;;   => nil
+
+;;;###autoload
 (defun eap ()
+  "Emacs' Alsaplayer - Music Without Jolts"
   (interactive)
   (if (eap-running-p)
       ;; just pop to EAP buffer if already running
       (progn (pop-to-buffer "*EAP*") (eap-keep-window-small))
     ;; else...
+    (run-hooks 'eap-startup-hook) ;; useful for mounting stuff
     (progn
-      (run-hooks 'eap-startup-hook) ;; useful for mounting stuff
       (if (y-or-n-p "Continue where you left off ")
 	  (progn
 	    ;; set eap-playlist variable to file contents, and go...
@@ -406,7 +417,7 @@ Q			Quit EAP		M-x eaq
 
 
 ;;; eap to dired
-;;;
+;;;###autoload
 (defun eap-dired-music-dir ()
   (interactive)
   (dired-other-window eap-music-dir))
@@ -426,7 +437,7 @@ Q			Quit EAP		M-x eaq
 
 
 ;;; dired to eap
-;;;
+;;;###autoload
 (defun dired-eap-replace-marked (rand-p)
   (interactive "p")
   (let ((files (eap-marked-check (dired-get-marked-files))))
@@ -434,7 +445,8 @@ Q			Quit EAP		M-x eaq
 	(setq eap-playlist (eap-marked-randomise files))
       (setq eap-playlist files))
     (eap-dwim eap-playlist nil))) ;start new playlist
-  
+
+;;;###autoload
 (defun dired-eap-enqueue-marked (rand-p)
   (interactive "p")
   (let ((files (eap-marked-check (dired-get-marked-files))))
@@ -443,6 +455,7 @@ Q			Quit EAP		M-x eaq
       (setq eap-playlist (nconc eap-playlist files)))
     (eap-dwim files t))) ;add files to current playlist
 
+;;;###autoload
 (defun dired-eap-symlink-to-playdir ()
   (interactive)
   (let ((dired-dwim-target t))
@@ -503,6 +516,7 @@ Q			Quit EAP		M-x eaq
 (defun ap- () (interactive) (eap-volume-change eap-volume-soft))
 (defun ap= () (interactive) (eap-volume-change eap-volume-full))
 ;;; dired function aliae
+;;;###autoload
 (defalias 'apm 'eap-dired-music-dir)
 (defalias 'apv 'eap-dired-current-track)
 (defalias 'aps 'eap-symlink-current-track)
