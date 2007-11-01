@@ -97,10 +97,9 @@
 ;;;  
 ;;; from within one of these buffers.
 
-
 ;;; code starts here...
-
-;; named volumes
+
+;; volumes
 (defvar eap-volume-mute 0.01)
 (defvar eap-volume-soft 0.2)
 (defvar eap-volume-full 1.0)
@@ -123,130 +122,70 @@
 "Hook run at startup.")
 
 
-;;; derived modes
+;;; modes
 ;;;
-(define-derived-mode eap-mode comint-mode "eap"
-  "
+(defvar eap-mode-map (make-keymap))
+(suppress-keymap eap-mode-map)
+(mapc (lambda (k) (define-key eap-mode-map (car k) (cdr k)))
+      '(;; state change keys (not volume)
+	([right] . ap>) ; next track
+	(">"     . ap>) ;  "     "
+	([left]  . ap<) ; previous track
+	("<"     . ap<) ;    "       "
+	(" "     . ap.) ; pause
+	("j"     . apj) ; jump to track?
+	("Q"     . apq) ; quit for good
+	;; fixed volume keys
+	("0"     . ap0) ; mute
+	("-"     . ap-) ; soft
+	("="     . ap=) ; full
+	;; dired keys
+	("m"     . apm) ; music dir
+	("v"     . apv) ; view track in dired
+	("s"     . aps) ; symlink track to playdir
+	;; view playlist
+	("p"     . app) ; view/refresh playlist
+	;; functions only acccessible from within an EAP buffer
+	("k"     . eap-keep-window-small)
+	("q"     . (lambda () (interactive) ; bury EAP buffers
+		     (delete-windows-on "*EAP*") (bury-buffer "*EAP*")
+		     (when (get-buffer "*EAP Playlist*")
+		       (bury-buffer "*EAP*")
+		       (kill-buffer "*EAP Playlist*"))))
+	([up]    . (lambda () ; volume up
+		     (interactive)
+		     (unless (eap-volume-at-full-p)
+		       (eap-volume-change '+)
+		       (setq eap-volume-restore eap-volume-knob))))
+	([down]   . (lambda () (interactive) ; volume down
+		      (unless (eap-volume-at-mute-p)
+			(eap-volume-change '-)
+			(setq eap-volume-restore eap-volume-knob))))
+	))
+
+;;; EAP mode
+(define-derived-mode eap-mode comint-mode "EAP"
+  "Major mode for the control of Emacs' Alsaplayer.
+
 Emacs' AlsaPlayer - \"Music Without Jolts\"
-========================================
-Major mode (derived from Comint mode) for the control and display
-of synchronous audio playback using alsaplayer.
-
-N.B. The same commands are available in *EAP* and
-     *EAP Playlist* buffers.
-
-Buffer key sequence:    Action:			Global command:
--------------------     ------			--------------
-<  OR  left arrow	Previous song		M-x ap<
->  OR  right arrow	Next song		M-x ap>
-SPC			Pause/Play		M-x ap.
-j			Jump to song		M-x apj
-
-0 (zero)		Mute volume		M-x ap0
--			Soft volume		M-x ap-
-=			Full volume		M-x ap=
-up arrow		Increase volume
-down arrow		Decrease volume
-
-m			Show music directory	M-x apm
-v			Show current song	M-x apv
-
-p			Show current playlist   M-x app
-q			Hide EAP buffers
-
-s			Add current song	M-x aps
-			  to named playlist
-
-k			Keep window small
-
-Q			Quit EAP		M-x eaq
-"
-
-  (setq comint-scroll-to-bottom-on-output t)
-  (eap-define-common-keys eap-mode-map)
-  (font-lock-mode))
+\\<eap-mode-map>
+\\{eap-mode-map}")
 
 (defvar eap-playlist-font-lock-keywords '(("^.*\\* ?$" . font-lock-keyword-face)))
 
-(define-derived-mode eap-playlist-mode fundamental-mode "eap-playlist"
-  "
+(defun eap-playlist-mode ()
+  "Major mode for the control of Emacs' AlsaPlayer and the
+display of the current Emacs' AlsaPlayer playlist.
+
 Emacs' AlsaPlayer - \"Music Without Jolts\"
-========================================
-Major mode for the display of the current EAP playlist, also
-providing control of EAP's synchronous audio playback using
-alsaplayer.
-
-N.B. The same commands are available in *EAP* and
-     *EAP Playlist* buffers.
-
-Buffer key sequence:    Action:			Global command:
--------------------     ------			--------------
-<  OR  left arrow	Previous song		M-x ap<
->  OR  right arrow	Next song		M-x ap>
-SPC			Pause/Play		M-x ap.
-j			Jump to song		M-x apj
-
-0 (zero)		Mute volume		M-x ap0
--			Soft volume		M-x ap-
-=			Full volume		M-x ap=
-up arrow		Increase volume
-down arrow		Decrease volume
-
-m			Show music directory	M-x apm
-v			Show current song	M-x apv
-
-p			Show current playlist   M-x app
-q			Hide EAP buffers
-
-s			Add current song	M-x aps
-			  to named playlist
-
-k			Keep window small
-
-Q			Quit EAP		M-x eaq
-"
-  (eap-define-common-keys eap-playlist-mode-map)
+\\<eap-mode-map>
+\\{eap-mode-map}"
+  (kill-all-local-variables)
+  (use-local-map eap-mode-map)
+  (setq major-mode 'eap-playlist-mode)
+  (setq mode-name "EAP Playlist")
   (setq font-lock-defaults '(eap-playlist-font-lock-keywords t))
   (font-lock-mode))
-
-(defun eap-define-common-keys (mode)
-  ;; non-volume state change keys
-  (define-key mode [right] 'ap>) ; either this...
-  (define-key mode ">"     'ap>) ; or this.
-  (define-key mode [left]  'ap<) ; either this...
-  (define-key mode "<"     'ap<) ; or this.
-  (define-key mode " "     'ap.)
-  (define-key mode "j"     'apj)
-  (define-key mode "Q"     'apq)
-  ;; fixed volume keys
-  (define-key mode "0"     'ap0) ; All these 'ap*' functions began life anonymously
-  (define-key mode "-"     'ap-) ; (defined here).  They went global later according to
-  (define-key mode "="     'ap=) ; a simple naming convention and can be found at the
-  ;; dired keys			   bottom of this file
-  (define-key mode "m"     'apm)
-  (define-key mode "v"     'apv)
-  (define-key mode "s"     'aps)
-  ;; view playlist
-  (define-key mode "p"     'app)
-  ;; functions only acccessible from within an EAP buffer
-  (define-key mode "k"     'eap-keep-window-small)
-  (define-key mode "q"
-    (lambda () (interactive)
-      (delete-windows-on "*EAP*") (bury-buffer "*EAP*")
-      (when (get-buffer "*EAP Playlist*")
-	(bury-buffer "*EAP*")
-	(kill-buffer "*EAP Playlist*"))))
-  (define-key mode [up]
-    (lambda ()
-      (interactive)
-      (unless (eap-volume-at-full-p)
-	(eap-volume-change '+)
-	(setq eap-volume-restore eap-volume-knob))))
-  (define-key mode [down]
-    (lambda () (interactive)
-      (unless (eap-volume-at-mute-p)
-	(eap-volume-change '-)
-	(setq eap-volume-restore eap-volume-knob)))))
 
 
 ;;; state control
