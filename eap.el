@@ -1,27 +1,27 @@
 ;;; eap.el --- Emacs' AlsaPlayer - "Music Without Jolts"
 
-;; Copyright (C) 2007
-;; Sebastian Tennant
+;;; Copyright (C) 2007
+;;; Sebastian Tennant
 
-;; Author:     Sebastian Tennant <sebyte@gmail.com>
-;; Maintainer: Sebastian Tennant <sebyte@gmail.com>
-;; Version:    1.0
-;; Keywords:   audio, player, mp3, ogg
+;;; Author:     Sebastian Tennant <sebyte@gmail.com>
+;;; Maintainer: Sebastian Tennant <sebyte@gmail.com>
+;;; Version:    1.0
+;;; Keywords:   audio, player, mp3, ogg
 
-;; This file is free software; you can redistribute it and/or modify
-;; it under the terms of the GNU General Public License as published by
-;; the Free Software Foundation; either version 2, or (at your option)
-;; any later version.
+;;; This file is free software; you can redistribute it and/or modify
+;;; it under the terms of the GNU General Public License as published by
+;;; the Free Software Foundation; either version 2, or (at your option)
+;;; any later version.
 
-;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs; see the file COPYING.  If not, write to
-;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
-;; Boston, MA 02110-1301, USA.
+;;; You should have received a copy of the GNU General Public License
+;;; along with GNU Emacs; see the file COPYING.  If not, write to
+;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+;;; Boston, MA 02110-1301, USA.
 
-;;; This is NOT part of GNU Emacs.
+;;; eap.el is NOT part of GNU Emacs.
 
 ;;; Installation:
-;;;
+;;; ============
 ;;; N.B. You must have alsaplayer (and specifically alsaplayer's *text*
 ;;;      interface installed) for EAP to work.  For instance, both of these
 ;;;      Debian packages must be installed:
@@ -41,12 +41,13 @@
 ;;;      exist; esd, jack, nas, oss... to name but a few.
 ;;;
 ;;;      
-;;; Make sure this file eap.el is located somehwere in your 'load-path'.  For
-;;; example, put this file in ~/elisp and then add this line to your ~/.emacs:
+;;; Make sure this file (eap.el) is located somehwere in your 'load-path'.
+;;; For example, put this file in ~/elisp and then add this line to your
+;;; ~/.emacs:
 ;;;
 ;;;   (add-to-list 'load-path "~/elisp")
 ;;;
-;;; Next, put this line in your ~/.emacs to ensure EAP is loaded at startup:
+;;; Next, put this line in your ~/.emacs to ensure EAP is 'primed' at startup:
 ;;;
 ;;;   (autoload 'eap "eap.el" "Emacs' AlsaPlayer - \"Music Without Jolts\"" t)
 ;;;
@@ -59,7 +60,7 @@
 ;;; Restart Emacs (or type the command 'M-x load-library <RET> eap <RET>')
 
 ;;; Commentary:
-;;;
+;;; ==========
 ;;; Emacs' AlsaPlayer - "Music Without Jolts" - an mp3/ogg player for Emacs.
 ;;;
 ;;; Type:
@@ -99,31 +100,42 @@
 
 ;;; code starts here...
 
-;; volumes
+;;; =========================================== defvars
+;;; volumes
 (defvar eap-volume-mute 0.01)
 (defvar eap-volume-soft 0.2)
 (defvar eap-volume-full 1.0)
-;; volume knob
+;;;
+;;; volume knob
 (defvar eap-volume-knob 1.0)
 (defvar eap-volume-step 0.01)
-;; fades
+;;;
+;;; fades
 (defvar eap-volume-restore 1.0)
-(defvar eap-volume-slow-fade-in-p nil)
-(defvar eap-volume-slow-fade-out-p t)
-(defvar eap-volume-fade-sleep-step 0.05)
-;; songs
+(defvar eap-volume-fade-in-p nil)
+(defvar eap-volume-fade-out-p nil)
+(defvar eap-volume-fade-step 0.05)
+;;;
+;;; songs
 (defvar eap-playlist '())
 (defvar eap-playdirs-dir "/media/l5_60Gb_ext3/EAP playdirs")
 (defvar eap-music-dir "/media/l5_60Gb_ext3/Music")
-;; state
-(defvar eap-paused-p nil)
-;; hooks
-(defvar eap-startup-hook nil
-"Hook run at startup.")
-
-
-;;; modes
 ;;;
+;;; misc
+(defvar eap-paused-p nil)
+(defvar eap-startup-hook nil "Hook run at startup.")
+(defvar eap-playlist-font-lock-keywords '((".*\\* ?$" . font-lock-keyword-face)
+					  ("Artist.*Pos ?$" . bold)))
+(defvar eap-header-line-format
+  (mapconcat
+   (lambda (k)
+     (format "%s %s" (propertize (car k) 'face 'bold) (cdr k)))
+   '((">" . "next,") ("<" . "previous,") ("SPC" . "pause,") ("j" . "jump,") ("p" . "playlist,") ("m" . "music,")
+     ("v" . "view,") ("s" . "symlink,") ("0" . "mute,") ("-" . "soft,") ("=" . "full,") ("q" . "bury,") ("Q" . "quit"))
+   " "))
+
+;;; =========================================== modes
+;;; mode map
 (defvar eap-mode-map (make-keymap))
 (suppress-keymap eap-mode-map)
 (mapc (lambda (k) (define-key eap-mode-map (car k) (cdr k)))
@@ -146,7 +158,13 @@
 	;; view playlist
 	("p"     . app) ; view/refresh playlist
 	;; functions only acccessible from within an EAP buffer
-	("k"     . eap-keep-window-small)
+	("b"     . (lambda ()
+		     (interactive)
+		     (eap-call-alsaplayer "relative" '("-2"))))
+	("f"     . (lambda ()
+		     (interactive)
+		     (eap-call-alsaplayer "relative" '("2"))))
+	("k"     . eap-shrink-window)
 	("q"     . (lambda () (interactive) ; bury EAP buffers
 		     (delete-windows-on "*EAP*") (bury-buffer "*EAP*")
 		     (when (get-buffer "*EAP Playlist*")
@@ -162,17 +180,19 @@
 			(eap-volume-change '-)
 			(setq eap-volume-restore eap-volume-knob))))
 	))
-
+;;;
 ;;; EAP mode
 (define-derived-mode eap-mode comint-mode "EAP"
   "Major mode for the control of Emacs' Alsaplayer.
 
 Emacs' AlsaPlayer - \"Music Without Jolts\"
 \\<eap-mode-map>
-\\{eap-mode-map}")
-
-(defvar eap-playlist-font-lock-keywords '(("^.*\\* ?$" . font-lock-keyword-face)))
-
+\\{eap-mode-map}"
+  (set-face-attribute 'header-line nil :underline nil)
+  (setq header-line-format eap-header-line-format)
+  (setq comint-scroll-to-bottom-on-output t))
+;;;
+;;; EAP Playlist mode
 (defun eap-playlist-mode ()
   "Major mode for the control of Emacs' AlsaPlayer and the
 display of the current Emacs' AlsaPlayer playlist.
@@ -185,35 +205,48 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (setq major-mode 'eap-playlist-mode)
   (setq mode-name "EAP Playlist")
   (setq font-lock-defaults '(eap-playlist-font-lock-keywords t))
-  (font-lock-mode))
-
+  (font-lock-mode 1)
+  (set-face-attribute 'header-line nil :underline nil)
+  (setq header-line-format eap-header-line-format))
 
-;;; state control
-;;;
+;;; =========================================== state control
+;;; call alsaplayer
 (defun eap-call-alsaplayer (action &optional args msg)
   (setq action (concat "--" action))
   (if args (apply 'call-process "alsaplayer" nil nil nil action args)
     (call-process "alsaplayer" nil nil nil action))
   (when msg (message msg)))
-
+;;;
+;;; change song stae
 (defun eap-state-change (change)
   (if (eap-running-p)
       (progn
-	(unless (equal change 'togg) (eap-fade-out))
+	(unless (equal change 'togg)
+	  (unless (not eap-volume-fade-out-p)
+	    (eap-volume-fade-out)))
 	(cond ((equal change 'next) (eap-call-alsaplayer "next"))
 	      ((equal change 'prev) (eap-call-alsaplayer "prev"))
 	      ((equal change 'togg)	;toggle (pause or resume)
 	       (if eap-paused-p
-		   (progn (eap-call-alsaplayer "start") (setq eap-paused-p nil) (eap-fade-in))
-		 (progn (eap-fade-out) (eap-call-alsaplayer "pause") (setq eap-paused-p t))))
+		   (progn (eap-call-alsaplayer "start")
+			  (setq eap-paused-p nil)
+			  (if eap-volume-fade-in-p
+			      (eap-volume-fade-in)
+			    (eap-volume-change eap-volume-restore)))
+		 (progn (unless (not eap-volume-fade-out-p)
+			  (eap-volume-fade-out))
+			(eap-call-alsaplayer "pause")
+			(setq eap-paused-p t))))
 	      ((equal change 'quit) (eap-call-alsaplayer "quit") (setq eap-playlist '() eap-paused-p nil))
 	      (t             (eap-call-alsaplayer "jump" (list change))))
-	(unless (equal change 'togg) (eap-volume-change eap-volume-restore)))
+	(unless (equal change 'togg)
+	  (if eap-volume-fade-in-p
+	      (eap-volume-fade-in)
+	    (eap-volume-change eap-volume-restore))))
     (message "EAP not running.")))
 
 
-;;; volume control
-;;;
+;;; =========================================== volume control
 (defun eap-volume-at-full-p ()
   (if (>= eap-volume-knob eap-volume-full)
       (progn (setq eap-volume-knob eap-volume-full) t)
@@ -235,22 +268,19 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	((numberp n) (setq eap-volume-knob n)))
   (call-process "alsaplayer" nil nil nil "--volume" (number-to-string eap-volume-knob)))
 
-(defun eap-fade-out ()
+(defun eap-volume-fade-out ()
   (setq eap-volume-restore eap-volume-knob)
   (while (not (eap-volume-at-mute-p))
     (eap-volume-change '-)
-    (when eap-volume-slow-fade-out-p
-      (sleep-for eap-volume-fade-sleep-step))))
+    (sleep-for eap-volume-fade-step)))
 
-(defun eap-fade-in ()
+(defun eap-volume-fade-in ()
   (while (not (eap-volume-at-restore-p))
     (eap-volume-change '+)
-    (when eap-volume-slow-fade-in-p
-      (sleep-for eap-volume-fade-sleep-step))))
+    (sleep-for eap-volume-fade-step)))
 
 
-;;; file management
-;;; 
+;;; =========================================== file management 
 (defun eap-check-file-suffix (str)
   (or (equal (substring str -4) ".mp3")
       (equal (substring str -4) ".MP3")
@@ -278,9 +308,8 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (equal (process-status "EAP") 'run))
 
 
-;;; do what I mean - start a new alsaplayer process,
-;;;		     add to existing playlist, or
-;;;		     start a new playlist
+;;; =========================================== do what I mean
+;;; start a new alsaplayer process, add to an existing playlist or start a new playlist
 (defun eap-dwim (files enqueue-p)
   (set-buffer (get-buffer-create "*EAP*"))
   (unless (equal major-mode "eap-mode") (eap-mode))
@@ -290,15 +319,15 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(erase-buffer)
 	(display-buffer
 	 (apply 'make-comint-in-buffer "EAP" nil "alsaplayer" nil "-i" "text" files))
-	(eap-keep-window-small))
+	(eap-shrink-window))
     (progn
       (if enqueue-p
 	  (eap-call-alsaplayer "enqueue" files "Added to play queue.")
 	(progn
-	  (eap-fade-out)
+	  (eap-volume-fade-out)
 	  (eap-call-alsaplayer "replace" files "Started new play queue.")
 	  (eap-volume-change eap-volume-restore))))))
-
+;;;
 ;;; top level entry to eap
 ;;;
 ;;; it would be nice to stop if eap-startup-hook returns nil
@@ -308,14 +337,13 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 ;;;   (add-hook 'test-hooks-hook (lambda () t))
 ;;;   (run-hooks 'test-hooks-hook)
 ;;;   => nil
-
 ;;;###autoload
 (defun eap ()
   "Emacs' Alsaplayer - Music Without Jolts"
   (interactive)
   (if (eap-running-p)
       ;; just pop to EAP buffer if already running
-      (progn (pop-to-buffer "*EAP*") (eap-keep-window-small))
+      (progn (pop-to-buffer "*EAP*") (eap-shrink-window))
     ;; else...
     (run-hooks 'eap-startup-hook) ;; useful for mounting stuff
     (progn
@@ -328,17 +356,19 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	    (eap-dwim nil nil))
 	;; just bring up music directory in Dired
 	(dired eap-music-dir)))))
-
-;; appearance 
-(defun eap-keep-window-small ()
+
+;;; =========================================== misc functions
+(defun eap-shrink-window ()
   (interactive)
   (let ((w (get-buffer-window "*EAP*")))
     (when (and w (not (= (window-height w) 3)))
       (fit-window-to-buffer w 3 3))))
 
+(defun eap-change-music-dir (dir)
+  (interactive "s")
+  (setq eap-music-dir dir))
 
-;;; status
-;;;
+;;; =========================================== status
 (defun eap-alsaplayer-status-alist ()
   (mapcar '(lambda (s) (split-string s ": "))
     (remove "---------------- Session ----------------"
@@ -355,7 +385,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (car (last (split-string (eap-alsaplayer-this-status "path") "/"))))
 
 
-;;; eap to dired
+;;; =========================================== eap to dired
 ;;;###autoload
 (defun eap-dired-music-dir ()
   (interactive)
@@ -375,7 +405,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (dired-eap-symlink-to-playdir))
 
 
-;;; dired to eap
+;;; =========================================== dired to eap
 ;;;###autoload
 (defun dired-eap-replace-marked (rand-p)
   (interactive "p")
@@ -384,7 +414,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(setq eap-playlist (eap-marked-randomise files))
       (setq eap-playlist files))
     (eap-dwim eap-playlist nil))) ;start new playlist
-
+;;;
 ;;;###autoload
 (defun dired-eap-enqueue-marked (rand-p)
   (interactive "p")
@@ -393,7 +423,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(setq eap-playlist (nconc eap-playlist (eap-marked-randomise files)))
       (setq eap-playlist (nconc eap-playlist files)))
     (eap-dwim files t))) ;add files to current playlist
-
+;;;
 ;;;###autoload
 (defun dired-eap-symlink-to-playdir ()
   (interactive)
@@ -404,8 +434,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (dired-do-symlink))))
 
 
-;;; view playlist
-;;;
+;;; =========================================== playlist
 (defun eap-display-playlist ()
   (interactive)
   (if (eap-running-p)
@@ -415,6 +444,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(delete-other-windows)		;this is needed for some reason
 	(when buffer-read-only (toggle-read-only))
 	(erase-buffer) 
+	(insert (format "\n%28s | %28s | %52s | %3s\n" "Artist" "Album" "Track file name" "Pos"))
 	(let ((qpos 1))
 	  (mapc '(lambda (s)
 		   (let* ((aas-list (last (split-string s "/") 3))
@@ -429,17 +459,21 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 		   (incf qpos))
 		eap-playlist))
 	(goto-char (point-min))
-	(re-search-forward (eap-alsaplayer-current-song) nil nil)
+	;; now place '*' next to current song, remembering that
+	;; file names longer than approx. 48 chars are truncated
+	(let ((search-substring-length
+	       (if (>= (length (eap-alsaplayer-current-song)) 49)
+		   48
+		 (1- (length (eap-alsaplayer-current-song))))))
+	  (re-search-forward (substring (eap-alsaplayer-current-song) 0 search-substring-length) nil nil))
 	(end-of-line) (insert "*")
-	;;   (beginning-of-line) (push-mark nil t) (end-of-line)
-	;;   (facemenu-set-bold)
 	(toggle-read-only)
 	(pop-to-buffer "*EAP*")		;return to *EAP*
-	(eap-keep-window-small))
-    (message "EAP isn't running :-(")))
+	(eap-shrink-window))
+    (message "Emacs' AlsaPlayer isn't running :-(")))
 
 
-;;; global to eap
+;;; =========================================== global to eap
 ;;; non-volume state change functions
 (defun ap> () (interactive) (eap-state-change 'next))
 (defun ap< () (interactive) (eap-state-change 'prev))
@@ -450,22 +484,23 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(message "That number does not correspond to a queued track.")
       (eap-state-change (number-to-string n)))))
 (defun apq () (interactive) (eap-state-change 'quit))
+;;;
 ;;; fixed volume functions
 (defun ap0 () (interactive) (eap-volume-change eap-volume-mute))
 (defun ap- () (interactive) (eap-volume-change eap-volume-soft))
 (defun ap= () (interactive) (eap-volume-change eap-volume-full))
+;;;
 ;;; dired function aliae
 ;;;###autoload
 (defalias 'apm 'eap-dired-music-dir)
 (defalias 'apv 'eap-dired-current-track)
 (defalias 'aps 'eap-symlink-current-track)
+;;;
 ;;; playlist function alias
 (defalias 'app 'eap-display-playlist)
-
-
 
+;;; =========================================== other
 ;;; send synchronous process output to a string
-;;; (not strictly part of EAP)
 (defun call-process-to-string (process &optional sep)
   "Start the synchronous process PROCESS (via `call-process') and
 return the results in a string.  PROCESS may be a list or a
@@ -484,7 +519,7 @@ whitespace value."
       (with-output-to-string
 	(with-current-buffer standard-output
 	  (apply 'call-process (car process-list) nil t nil (cdr process-list)))))))
-
+;;;
 ;;; add dired-eap-* key sequences to dired-mode-map
 (eval-after-load "dired"
   '(progn
