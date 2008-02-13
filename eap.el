@@ -124,7 +124,7 @@
 ;;; fades
 (defvar eap-volume-restore 1.0)
 (defvar eap-volume-fade-in-p nil)
-(defvar eap-volume-fade-out-p nil)
+(defvar eap-volume-fade-out-p t)
 (defvar eap-volume-fade-step 0.05)
 
 ;;; songs
