@@ -358,9 +358,9 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       ;; just pop to EAP buffer if already running
       (progn (pop-to-buffer "*EAP*") (eap-shrink-window))
     ;; else...
-    (run-hooks 'eap-startup-hook) ;; useful for mounting stuff
     (progn
-      (if (y-or-n-p "Continue where you left off ")
+      (if (and (file-exists-p "~/.alsaplayer/alsaplayer.m3u")
+	       (y-or-n-p "Continue where you left off "))
 	  (progn
 	    ;; set eap-playlist variable to file contents, and go...
 	    (with-temp-buffer
@@ -368,7 +368,10 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	      (setq eap-playlist (remove "" (split-string (buffer-string) "\n"))))
 	    (eap-dwim nil nil))
 	;; just bring up music directory in Dired
-	(dired eap-music-dir)))))
+	(if (file-accessible-directory-p eap-music-dir)
+	    (dired eap-music-dir)
+	  (message "Music directory (%s) not found or inaccessible." eap-music-dir)
+	)))))
 
 (defun eap-shrink-window ()
   (interactive)
