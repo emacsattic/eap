@@ -151,15 +151,15 @@
 (suppress-keymap eap-mode-map)
 (mapc (lambda (k) (define-key eap-mode-map (car k) (cdr k)))
       '(;; state change keys (not volume)
-	([right] . ap>) (">"     . ap>) ;next track
-	([left]  . ap<) ("<"     . ap<) ;previous track
-	(" "     . ap.) ("j"     . apj) ("Q"     . apq) ;pause, jump & quit
+	([right] . ap>) (">" . ap>) ;next track
+	([left]  . ap<) ("<" . ap<) ;previous track
+	(" "     . ap.) ("j" . apj) ("Q" . apq) ;pause, jump & quit
 	;; fixed volume keys
-	("0"     . ap0) ("-"     . ap-) ("="     . ap=) ;mute, soft & full volume
+	("0"     . ap0) ("-" . ap-) ("=" . ap=) ;mute, soft & full volume
 	;; eap-to-dired keys
-	("m"     . apm) ("v"     . apv) ("s"     . aps) ;music-dir, view track & symlink track to playdir
-	;; view playlist
-	("p"     . app) ; view/refresh playlist
+	("m"     . apm) ("v" . apv) ("s" . aps) ;music-dir, view track & symlink track to playdir
+	;; other keys
+	("p"     . app) ("i" . api) ("o" . apo) ;playlist, toggle fade-in, toggle fade-out
 	;; functions only acccessible from within an EAP buffer
 	("b"     . (lambda ()
 		     (interactive)
@@ -172,26 +172,20 @@
 		     (unless (eap-volume-at-full-p)
 		       (eap-volume-change '+)
 		       (setq eap-volume-restore eap-volume-knob))))
-	([down]   . (lambda () (interactive) ; volume down
-		      (unless (eap-volume-at-mute-p)
-			(eap-volume-change '-)
-			(setq eap-volume-restore eap-volume-knob))))
-	("c"      . (lambda (dir) (interactive "sChange value of eap-music-dir to: ")
-		      (if (file-accessible-directory-p dir)
-			  (setq eap-music-dir dir)
-			(message "%s not accessible. eap-music-directory unchanged." dir))))
-	("k"      . eap-shrink-window) ;used in code (below)
-	("q"      . (lambda () (interactive) ; bury EAP buffers
-		      (delete-windows-on "*EAP*") (bury-buffer "*EAP*")
-		      (when (get-buffer "*EAP Playlist*")
-			(bury-buffer "*EAP*")
-			(kill-buffer "*EAP Playlist*"))))
-	("i"      .  (lambda () (interactive)
-		       (setq eap-volume-fade-in-p (not eap-volume-fade-in-p))
-		       (message "Volume fade-in now %s." (if eap-volume-fade-in-p "active" "inactive"))))
-	("o"      .  (lambda () (interactive)
-		       (setq eap-volume-fade-out-p (not eap-volume-fade-out-p))
-		       (message "Volume fade-out now %s." (if eap-volume-fade-out-p "active" "inactive"))))
+	([down]  . (lambda () (interactive) ; volume down
+		     (unless (eap-volume-at-mute-p)
+		       (eap-volume-change '-)
+		       (setq eap-volume-restore eap-volume-knob))))
+	("c"     . (lambda (dir) (interactive "sChange value of eap-music-dir to: ")
+		     (if (file-accessible-directory-p dir)
+			 (setq eap-music-dir dir)
+		       (message "%s not accessible. eap-music-directory unchanged." dir))))
+	("k"     . eap-shrink-window) ;used in code (below)
+	("q"     . (lambda () (interactive) ; bury EAP buffers
+		     (delete-windows-on "*EAP*") (bury-buffer "*EAP*")
+		     (when (get-buffer "*EAP Playlist*")
+		       (bury-buffer "*EAP*")
+		       (kill-buffer "*EAP Playlist*"))))
 	))
 
 ;;; EAP mode
@@ -446,7 +440,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (dired-do-symlink))))
 
 
-;;; =========================================== playlist
+;;; =========================================== other
 (defun eap-display-playlist ()
   (interactive)
   (if (eap-running-p)
@@ -484,6 +478,16 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(eap-shrink-window))
     (message "Emacs' AlsaPlayer isn't running :-(")))
 
+(defun eap-toggle-fade-in ()
+  (interactive)
+  (setq eap-volume-fade-in-p (not eap-volume-fade-in-p))
+  (message "Volume fade-in now %s." (if eap-volume-fade-in-p "active" "inactive")))
+
+(defun eap-toggle-fade-out ()
+  (interactive)
+  (setq eap-volume-fade-out-p (not eap-volume-fade-out-p))
+  (message "Volume fade-out now %s." (if eap-volume-fade-out-p "active" "inactive")))
+
 
 ;;; =========================================== global to eap
 ;;; non-volume state change functions
@@ -497,10 +501,13 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (eap-state-change (number-to-string n)))))
 (defun apq () (interactive) (eap-state-change 'quit))
 
-;;; fixed volume functions
+;;; volume functions
 (defun ap0 () (interactive) (eap-volume-change eap-volume-mute))
 (defun ap- () (interactive) (eap-volume-change eap-volume-soft))
 (defun ap= () (interactive) (eap-volume-change eap-volume-full))
+
+(defalias 'api 'eap-toggle-fade-in)
+(defalias 'apo 'eap-toggle-fade-out)
 
 ;;; dired function aliae
 ;;;###autoload
