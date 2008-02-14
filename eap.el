@@ -3,7 +3,7 @@
 ;;;
 ;;; Author:     Sebastian Tennant <sebyte@gmail.com>
 ;;; Maintainer: Sebastian Tennant <sebyte@gmail.com>
-;;; Version:    1.1
+;;; Version:    0.11
 ;;; Keywords:   audio, player, mp3, ogg
 ;;;
 ;;; This file is free software; you can redistribute it and/or modify
@@ -17,98 +17,144 @@
 ;;; Boston, MA 02110-1301, USA.
 ;;;
 ;;; eap.el is NOT part of GNU Emacs.
-
-;;; Installation:
-;;; ============
-;;; N.B. You must have alsaplayer (and specifically alsaplayer's *text*
-;;;      interface installed) for EAP to work.  For instance, both of these
-;;;      Debian packages must be installed:
-;;;
-;;;        alsaplayer-common
-;;;        alsaplayer-text
-;;;
-;;;      Under Debian, a third package is also required but which one depends
-;;;      upon your choice of audio output module.  For example, I use the
-;;;      Advanced Linux Sound Architecture (ALSA), so I also have this Debian
-;;;      package installed:
-;;;
-;;;        alsaplayer-alsa
-;;;
-;;;      As you may have guessed, ALSA is where alsaplayer gets it's name, but
-;;;      you don't have to use this output module.  Many other output modules
-;;;      exist; esd, jack, nas, oss... to name but a few.
-;;;
-;;;      
-;;; Make sure this file (eap.el) is located somehwere in your 'load-path'.
-;;; For example, put this file in ~/elisp and then add this line to your
-;;; ~/.emacs:
-;;;
-;;;   (add-to-list 'load-path "~/elisp")
-;;;
-;;; Also, put this line in your ~/.emacs:
-;;;
-;;;   (autoload 'eap "eap.el" "Emacs' AlsaPlayer - \"Music Without Jolts\"" t)
-;;;
-;;; Finally, tell EAP where your music is and where you would like to keep your
-;;; playlist directories (a.k.a playdirs).  For example:
-;;;
+
+;;; INSTALLATION
+;;; 
+;;; 1. Install Alsaplayer
+;;; 
+;;; On a Debian GNU/Linux system a minimal working Alsaplayer requires
+;;; that these two packages:
+;;; 
+;;;   alsaplayer-common alsaplayer-text
+;;; 
+;;; and one of these:
+;;; 
+;;;   alsaplayer-alsa alsaplayer-esd alsaplayer-jack alsaplayer-nas alsaplayer-oss
+;;; 
+;;; be installed.
+;;; 
+;;; Choose the last package according to your audio output
+;;; interface. Alsaplayer is designed to work closely with the ALSA
+;;; system whenever possible, i.e., it works perfectly well without
+;;; it.
+;;; 
+;;; Test the text interface by issuing the command:
+;;; 
+;;;   $ alsaplayer -i text some-audio-file.ogg
+;;; 
+;;; 2. Install eap.el
+;;; 
+;;; Ensure that the file, eap.el, is located somehwere in your
+;;; load-path. For example, put eap.el in ~/elisp and then add this
+;;; line to your ~/.emacs:
+;;; 
+;;; (add-to-list 'load-path "~/elisp")
+;;; 
+;;; Tell EAP where your music is kept, and where you would like to
+;;; keep your playlist directories (a.k.a. playdirs). For example, add
+;;; these two lines to your ~/.emacs:
+;;; 
 ;;;   (setq eap-music-dir    "/home/bob/music"
-;;;   (setq eap-playdirs-dir "/home/bob/eap-playdirs"
-;;;
-;;; Now, restart Emacs and type the command 'M-x eap' to begin.
-;;;
-;;; You may also wish to add these lines to your ~/.emacs.  Doing so will
-;;; allow you to launch EAP directly from dired buffers:
-;;;
-;;;   (eval-after-load "dired"
+;;;         eap-playdirs-dir "/home/bob/eap-playdirs")
+;;; 
+;;; N.B. Do not make you playlist directory, eap-playdirs-dir, a
+;;;      sub-directory of your music directory, eap-music-dir.
+;;; 
+;;; Ensure that EAP is always ready to go. Copy and paste these lines
+;;; to your ~/.emacs:
+;;; 
+;;;   (autoload 'eap "eap.el" "Emacs' AlsaPlayer - Music Without Jolts" t)
+;;; 
+;;;   (eval-after-load "Dired"
 ;;;     '(progn
-;;;        (define-prefix-command 'dired-eap)
-;;;        (define-key dired-mode-map "\M-p" dired-eap)
-;;;        (define-key dired-mode-map "\M-pp" 'dired-eap-replace-marked)
-;;;        (define-key dired-mode-map "\M-pq" 'dired-eap-enqueue-marked)
-;;;        (define-key dired-mode-map "\M-ps" 'dired-eap-symlink-to-playdir)))
-
-
-;;; Commentary:
-;;; ==========
-;;; Emacs' AlsaPlayer - "Music Without Jolts" - an mp3/ogg player for Emacs.
-;;;
-;;; Type:
-;;;
-;;;   M-x eap <RET>
-;;;
-;;; and you will be asked if you would like to continue where you left off?
-;;; Obviously, if this is your first time, reply no and you will be taken to
+;;;        (define-prefix-command 'Dired-eap)
+;;;        (define-key Dired-mode-map "\M-p" Dired-eap)
+;;;        (define-key Dired-mode-map "\M-pp" 'Dired-eap-replace-marked)
+;;;        (define-key Dired-mode-map "\M-pq" 'Dired-eap-enqueue-marked)
+;;;        (define-key Dired-mode-map "\M-ps" 'Dired-eap-symlink-to-playdir)))
+;;; 
+;;; Restart Emacs.
+
+;;; USAGE
+;;; 
+;;; If you've ever used Alsaplayer before, the first time you type:
+;;; 
+;;;   M-x eap RET
+;;; 
+;;; you may well be asked if you want to continue where you left off?
+;;; Answer positively and Emacs' AlsaPlayer will proceed to play
+;;; through the playlist created the last time you used Alsaplayer.
+;;; 
+;;; If you've never used Alsaplayer before you'll simply be taken to
 ;;; your music directory in Dired.
+;;; 
+;;; N.B. You don't have to start Alsaplayer this way. M-x eap RET is
+;;;      simply a way to pick up where you left off, a short-cut to
+;;;      your music directory, or a short cut to the EAP buffer if EAP
+;;;      is running.
+;;; 
+;;; Access to your music is exclusively through Dired buffers. There
+;;; are three key sequences available to you, each of which can be
+;;; performed on a single file, a set of marked files, a single
+;;; directory, or a set of marked directories. I refer to these simply
+;;; as 'marked' below:
+;;; 
+;;;   M-pp   Start a new playlist consisting of marked (e.g., if point is
+;;;          on an album directory, EAP will start playing that album)
 ;;;
-;;; Access to your music is exclusively through Dired buffers.  There are three
-;;; key sequences available to you, each of which can be performed on a single
-;;; file, a set of marked files, a single directory, or a set of marked
-;;; directories.  I refer to these simply as 'marked' below.
+;;;   M-pq   Add marked to the current playlist (a.k.a enqueuing)
 ;;;
-;;;  M-pp	-	Start a new playlist consisting of marked (e.g., if
-;;;			  point is on an album directory, EAP will start
-;;;			  playing that album immediately)
-;;;
-;;;  M-pq	-	Add marked to the current playlist (a.k.a enqueuing)
-;;;
-;;;  M-ps	-	Add marked to named playlist
-;;;
-;;; Note: M-pp and M-pq can be prefixed with C-u to ensure that songs are
-;;;       added in a random order (a.k.a. 'shuffle-mode').
-;;;
-;;; Finally, there are two EAP buffers; *EAP* and *EAP Playlist*.  *EAP*
-;;; displays the alsaplayer process output and is usually just a couple of lines
-;;; tall.  *EAP Playlist* displays the contents of the current playlist.
-;;;
-;;; Further commands are available from within these buffers (the same in each).
-;;; To learn about them, type:
-;;;
-;;;  C-hm	OR	 M-x describe-mode <RET>
-;;;
-;;; from within one of these buffers.
-;;;
-;;; EAP code starts here...
+;;;   M-ps   Add marked to named playlist
+;;; 
+;;; N.B. Prefix M-pp and M-pq with C-u to ensure that songs are added
+;;;      to the current playlist (or replace the current playlist) in
+;;;      a random order (a.k.a. 'shuffling').
+;;; 
+;;; Finally, there are two EAP buffers; *EAP* and *EAP Playlist*.
+;;; *EAP* displays the Alsaplayer process output, and is never usually
+;;; more than two lines tall. *EAP Playlist* displays the contents of
+;;; the current playlist, with the currently playing song
+;;; highlighted. This buffer is not self-refreshing so you may
+;;; occasionally need to type p to update it.
+
+;;; KEYS AND COMMANDS
+;;; Key commands are the same in both buffers; the *EAP* buffer and the *EAP Playlist* buffer.
+;;; 
+;;; Playlist/song position commands
+;;; -------------------------------
+;;; Key          Action        Global command 
+;;; < OR [left]  Previous song M-x ap<        
+;;; > OR [right] Next song     M-x ap>        
+;;; SPC          Pause/Play    M-x ap.        
+;;; j            Jump to song  M-x apj        
+;;; 
+;;; Volume adjustment commands
+;;; --------------------------
+;;; Key Action      Global command 
+;;; 0   Volume mute M-x ap0        
+;;; -   Volume soft M-x ap-        
+;;; =   Volume full M-x ap=        
+;;; 
+;;; Other commands
+;;; --------------
+;;; Key Action                              Global command
+;;; p   Show current playlist               M-x app       
+;;; m   Show music directory                M-x apm       
+;;; v   Show current song                   M-x apv       
+;;; s   Add current song to named playlist  M-x aps       
+;;; i   Toggle fade-in functionality        M-x api       
+;;; o   Toggle fade-out functionality       M-x apo       
+;;; Q   Quit EAP                            M-x eaq       
+;;; 
+;;; Commands only available in EAP buffers
+;;; --------------------------------------
+;;; Key    Action         
+;;; f      Seek forward (in song)  
+;;; b      Seek backward (in song) 
+;;; [up]   Volume up               
+;;; [down] Volume down             
+;;; k      Keep window small       
+;;; q      Bury EAP buffers        
 
 
 ;;; =========================================== defvars
