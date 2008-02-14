@@ -480,6 +480,16 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 (defun dired-eap-symlink-to-playdir ()
   (interactive)
   (let ((dired-dwim-target t))
+    ;; create the playdirs directory if necessary
+    (or (file-accessible-directory-p eap-playdirs-dir)
+	(make-directory eap-playdirs-dir t))
+    ;; create a playdir if necessary
+    (or (split-string
+	 (shell-command-to-string
+	  (format "find %s -mindepth 1 -type d -print"
+		  (shell-quote-argument eap-playdirs-dir))))
+	(make-directory (concat eap-playdirs-dir "/Favourite songs")))
+    ;; go
     (dired-other-window eap-playdirs-dir)
     (other-window 1)
     (let ((default-directory eap-playdirs-dir))
