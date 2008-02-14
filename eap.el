@@ -20,9 +20,9 @@
 
 ;;; INSTALLATION
 ;;; 
-;;; 1. Install Alsaplayer
+;;; 1. Install AlsaPlayer
 ;;; 
-;;; On a Debian GNU/Linux system a minimal working Alsaplayer requires
+;;; On a Debian GNU/Linux system a minimal working AlsaPlayer requires
 ;;; that these two packages:
 ;;; 
 ;;;   alsaplayer-common alsaplayer-text
@@ -34,7 +34,7 @@
 ;;; be installed.
 ;;; 
 ;;; Choose the last package according to your audio output
-;;; interface. Alsaplayer is designed to work closely with the ALSA
+;;; interface. AlsaPlayer is designed to work closely with the ALSA
 ;;; system whenever possible, i.e., it works perfectly well without
 ;;; it.
 ;;; 
@@ -57,38 +57,41 @@
 ;;;   (setq eap-music-dir    "/home/bob/music"
 ;;;         eap-playdirs-dir "/home/bob/eap-playdirs")
 ;;; 
-;;; N.B. Do not make you playlist directory, eap-playdirs-dir, a
+;;; N.B. Don't make your playlist directory, eap-playdirs-dir, a
 ;;;      sub-directory of your music directory, eap-music-dir.
 ;;; 
 ;;; Ensure that EAP is always ready to go. Copy and paste these lines
 ;;; to your ~/.emacs:
 ;;; 
-;;;   (autoload 'eap "eap.el" "Emacs' AlsaPlayer - Music Without Jolts" t)
-;;; 
-;;;   (eval-after-load "Dired"
+;;;   (autoload 'eap                      "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
+;;;   (autoload 'apm                      "eap" "Visit Emacs' AlsaPlayer's music directory in Dired" t)
+;;;   (autoload 'dired-eap-replace-marked "eap" "Dired access to Emacs' AlsaPlayer" t)
+;;;   (autoload 'dired-eap-enqueue-marked "eap" "Dired access to Emacs' AlsaPlayer" t)
+;;;
+;;;   (eval-after-load "dired"
 ;;;     '(progn
-;;;        (define-prefix-command 'Dired-eap)
-;;;        (define-key Dired-mode-map "\M-p" Dired-eap)
-;;;        (define-key Dired-mode-map "\M-pp" 'Dired-eap-replace-marked)
-;;;        (define-key Dired-mode-map "\M-pq" 'Dired-eap-enqueue-marked)
-;;;        (define-key Dired-mode-map "\M-ps" 'Dired-eap-symlink-to-playdir)))
+;;;        (define-prefix-command 'dired-eap)
+;;;        (define-key dired-mode-map "\M-p" dired-eap)
+;;;        (define-key dired-mode-map "\M-pp" 'dired-eap-replace-marked)
+;;;        (define-key dired-mode-map "\M-pq" 'dired-eap-enqueue-marked)
+;;;        (define-key dired-mode-map "\M-ps" 'dired-eap-symlink-to-playdir)))
 ;;; 
-;;; Restart Emacs.
+;;; Restart Emacs or (M-x load-file RET ~/.emacs RET).
 
 ;;; USAGE
 ;;; 
-;;; If you've ever used Alsaplayer before, the first time you type:
+;;; If you've ever used AlsaPlayer before, the first time you type:
 ;;; 
 ;;;   M-x eap RET
 ;;; 
 ;;; you may well be asked if you want to continue where you left off?
 ;;; Answer positively and Emacs' AlsaPlayer will proceed to play
-;;; through the playlist created the last time you used Alsaplayer.
+;;; through the playlist created the last time you used AlsaPlayer.
 ;;; 
-;;; If you've never used Alsaplayer before you'll simply be taken to
+;;; If you've never used AlsaPlayer before you'll simply be taken to
 ;;; your music directory in Dired.
 ;;; 
-;;; N.B. You don't have to start Alsaplayer this way. M-x eap RET is
+;;; N.B. You don't have to start AlsaPlayer this way. M-x eap RET is
 ;;;      simply a way to pick up where you left off, a short-cut to
 ;;;      your music directory, or a short cut to the EAP buffer if EAP
 ;;;      is running.
@@ -111,7 +114,7 @@
 ;;;      a random order (a.k.a. 'shuffling').
 ;;; 
 ;;; Finally, there are two EAP buffers; *EAP* and *EAP Playlist*.
-;;; *EAP* displays the Alsaplayer process output, and is never usually
+;;; *EAP* displays the AlsaPlayer process output, and is never usually
 ;;; more than two lines tall. *EAP Playlist* displays the contents of
 ;;; the current playlist, with the currently playing song
 ;;; highlighted. This buffer is not self-refreshing so you may
@@ -169,8 +172,8 @@
 
 ;;; fades
 (defvar eap-volume-restore 1.0)
-(defvar eap-volume-fade-in-p nil)
-(defvar eap-volume-fade-out-p t)
+(defvar eap-volume-fade-in-flag nil)
+(defvar eap-volume-fade-out-flag t)
 (defvar eap-volume-fade-step 0.05)
 
 ;;; songs
@@ -179,7 +182,7 @@
 (defvar eap-music-dir "/media/l5_60Gb_ext3/Music")
 
 ;;; misc
-(defvar eap-paused-p nil)
+(defvar eap-paused-flag nil)
 (defvar eap-startup-hook nil "Hook run at startup.")
 (defvar eap-playlist-font-lock-keywords '((".*\\* ?$" . font-lock-keyword-face)
 					  (".*Pos ?$" . font-lock-builtin-face)))
@@ -236,7 +239,7 @@
 
 ;;; EAP mode
 (define-derived-mode eap-mode comint-mode "EAP"
-  "Major mode for the control of Emacs' Alsaplayer.
+  "Major mode for the control of Emacs' AlsaPlayer.
 
 Emacs' AlsaPlayer - \"Music Without Jolts\"
 \\<eap-mode-map>
@@ -275,25 +278,25 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (if (eap-running-p)
       (progn
 	(unless (equal change 'togg)
-	  (unless (not eap-volume-fade-out-p)
+	  (unless (not eap-volume-fade-out-flag)
 	    (eap-volume-fade-out)))
 	(cond ((equal change 'next) (eap-call-alsaplayer "next"))
 	      ((equal change 'prev) (eap-call-alsaplayer "prev"))
 	      ((equal change 'togg)	;toggle (pause or resume)
-	       (if eap-paused-p
+	       (if eap-paused-flag
 		   (progn (eap-call-alsaplayer "start")
-			  (setq eap-paused-p nil)
-			  (if eap-volume-fade-in-p
+			  (setq eap-paused-flag nil)
+			  (if eap-volume-fade-in-flag
 			      (eap-volume-fade-in)
 			    (eap-volume-change eap-volume-restore)))
-		 (progn (unless (not eap-volume-fade-out-p)
+		 (progn (unless (not eap-volume-fade-out-flag)
 			  (eap-volume-fade-out))
 			(eap-call-alsaplayer "pause")
-			(setq eap-paused-p t))))
-	      ((equal change 'quit) (eap-call-alsaplayer "quit") (setq eap-playlist '() eap-paused-p nil))
+			(setq eap-paused-flag t))))
+	      ((equal change 'quit) (eap-call-alsaplayer "quit") (setq eap-playlist '() eap-paused-flag nil))
 	      (t             (eap-call-alsaplayer "jump" (list change))))
 	(unless (equal change 'togg)
-	  (if eap-volume-fade-in-p
+	  (if eap-volume-fade-in-flag
 	      (eap-volume-fade-in)
 	    (eap-volume-change eap-volume-restore))))
     (message "EAP not running.")))
@@ -363,7 +366,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 ;;; =========================================== do what I mean
 ;;; start a new alsaplayer process, add to an existing playlist or start a new playlist
-(defun eap-dwim (files enqueue-p)
+(defun eap-dwim (files enqueue-flag)
   (set-buffer (get-buffer-create "*EAP*"))
   (unless (equal major-mode "eap-mode") (eap-mode))
   ;; go alsaplayer go
@@ -374,25 +377,17 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	 (apply 'make-comint-in-buffer "EAP" nil "alsaplayer" nil "-i" "text" files))
 	(eap-shrink-window))
     (progn
-      (if enqueue-p
+      (if enqueue-flag
 	  (eap-call-alsaplayer "enqueue" files "Added to play queue.")
 	(progn
-	  (when eap-volume-fade-out-p (eap-volume-fade-out))
+	  (when eap-volume-fade-out-flag (eap-volume-fade-out))
 	  (eap-call-alsaplayer "replace" files "Started new play queue.")
 	  (eap-volume-change eap-volume-restore))))))
 
 ;;; top level entry to eap
-
-;;; it would be nice to stop if eap-startup-hook returns nil
-;;; but as this code snippet demonstrates run-hooks always returns nil:
-;;;
-;;;   (setq test-hooks-hook '())
-;;;   (add-hook 'test-hooks-hook (lambda () t))
-;;;   (run-hooks 'test-hooks-hook)
-;;;   => nil
 ;;;###autoload
 (defun eap ()
-  "Emacs' Alsaplayer - Music Without Jolts"
+  "Emacs' AlsaPlayer - Music Without Jolts"
   (interactive)
   (if (eap-running-p)
       ;; just pop to EAP buffer if already running
@@ -438,7 +433,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 
 ;;; =========================================== eap to dired
-;;;###autoload
+;;; no need to auto-load this as well as the alias (apm)
 (defun eap-dired-music-dir ()
   (interactive)
   (dired-other-window eap-music-dir))
@@ -459,24 +454,23 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 ;;; =========================================== dired to eap
 ;;;###autoload
-(defun dired-eap-replace-marked (rand-p)
+(defun dired-eap-replace-marked (rand-flag)
   (interactive "p")
   (let ((files (eap-marked-check (dired-get-marked-files))))
-    (if (equal rand-p 4)
+    (if (equal rand-flag 4)
 	(setq eap-playlist (eap-marked-randomise files))
       (setq eap-playlist files))
     (eap-dwim eap-playlist nil))) ;start new playlist
 
 ;;;###autoload
-(defun dired-eap-enqueue-marked (rand-p)
+(defun dired-eap-enqueue-marked (rand-flag)
   (interactive "p")
   (let ((files (eap-marked-check (dired-get-marked-files))))
-    (if (equal rand-p 4)
+    (if (equal rand-flag 4)
 	(setq eap-playlist (nconc eap-playlist (eap-marked-randomise files)))
       (setq eap-playlist (nconc eap-playlist files)))
     (eap-dwim files t))) ;add files to current playlist
 
-;;;###autoload
 (defun dired-eap-symlink-to-playdir ()
   (interactive)
   (let ((dired-dwim-target t))
@@ -536,13 +530,13 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 (defun eap-toggle-fade-in ()
   (interactive)
-  (setq eap-volume-fade-in-p (not eap-volume-fade-in-p))
-  (message "Volume fade-in now %s." (if eap-volume-fade-in-p "active" "inactive")))
+  (setq eap-volume-fade-in-flag (not eap-volume-fade-in-flag))
+  (message "Volume fade-in now %s." (if eap-volume-fade-in-flag "active" "inactive")))
 
 (defun eap-toggle-fade-out ()
   (interactive)
-  (setq eap-volume-fade-out-p (not eap-volume-fade-out-p))
-  (message "Volume fade-out now %s." (if eap-volume-fade-out-p "active" "inactive")))
+  (setq eap-volume-fade-out-flag (not eap-volume-fade-out-flag))
+  (message "Volume fade-out now %s." (if eap-volume-fade-out-flag "active" "inactive")))
 
 
 ;;; =========================================== global to eap
