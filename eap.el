@@ -63,10 +63,11 @@
 ;;; Ensure that EAP is always ready to go. Copy and paste these lines
 ;;; to your ~/.emacs:
 ;;; 
-;;;   (autoload 'eap                      "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
-;;;   (autoload 'apm                      "eap" "Visit Emacs' AlsaPlayer's music directory in Dired" t)
-;;;   (autoload 'dired-eap-replace-marked "eap" "Dired access to Emacs' AlsaPlayer" t)
-;;;   (autoload 'dired-eap-enqueue-marked "eap" "Dired access to Emacs' AlsaPlayer" t)
+;;;   (autoload 'eap                          "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
+;;;   (autoload 'apm                          "eap" "Visit Emacs' AlsaPlayer's music directory in Dired" t)
+;;;   (autoload 'dired-eap-replace-marked     "eap" "Dired access to Emacs' AlsaPlayer" t)
+;;;   (autoload 'dired-eap-enqueue-marked     "eap" "Dired access to Emacs' AlsaPlayer" t)
+;;;   (autoload 'dired-eap-symlink-to-playdir "eap" "Dired access to Emacs' AlsaPlayer" t)
 ;;;
 ;;;   (eval-after-load "dired"
 ;;;     '(progn
@@ -471,6 +472,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (setq eap-playlist (nconc eap-playlist files)))
     (eap-dwim files t))) ;add files to current playlist
 
+;;;###autoload
 (defun dired-eap-symlink-to-playdir ()
   (interactive)
   (let ((dired-dwim-target t))
