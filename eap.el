@@ -591,13 +591,3 @@ whitespace value."
 	(with-current-buffer standard-output
 	  (apply 'call-process (car process-list) nil t nil (cdr process-list)))))))
 
-;;; add dired-eap-* key sequences to dired-mode-map
-;;;###autoload
-(eval-after-load "dired"
-  '(progn
-     (define-prefix-command 'dired-eap)           ;creates a sparse keymap
-     (define-key dired-mode-map "\M-p" dired-eap) ;accessed by M-p
-     (define-key dired-mode-map "\M-pp" 'dired-eap-replace-marked) ;new playlist
-     (define-key dired-mode-map "\M-pq" 'dired-eap-enqueue-marked) ;add to current playlist
-     (define-key dired-mode-map "\M-ps" 'dired-eap-symlink-to-playdir))) ;add to named playlist
-
