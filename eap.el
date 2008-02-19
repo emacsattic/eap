@@ -395,7 +395,8 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (progn (pop-to-buffer "*EAP*") (eap-shrink-window))
     ;; else...
     (progn
-      (if (and (file-exists-p "~/.alsaplayer/alsaplayer.m3u")
+      (if (and (file-readable-p "~/.alsaplayer/alsaplayer.m3u")
+	       (not (equal (elt (file-attributes "~/.alsaplayer/alsaplayer.m3u") 7) 0))
 	       (y-or-n-p "Continue where you left off "))
 	  (progn
 	    ;; set eap-playlist variable to file contents, and go...
