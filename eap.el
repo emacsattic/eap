@@ -161,6 +161,10 @@
 ;;; q      Bury EAP buffers        
 
 
+
+;;; ensure dired keybindings are loaded
+(require 'eap-dired-keybindings)
+
 ;;; =========================================== defvars
 ;;; volumes
 (defvar eap-volume-mute 0.01)
@@ -541,6 +545,12 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (setq eap-volume-fade-out-flag (not eap-volume-fade-out-flag))
   (message "Volume fade-out now %s." (if eap-volume-fade-out-flag "active" "inactive")))
 
+;;; add kill-buffer-hook to ensure AlsaPlayer quits cleanly
+(add-hook 'kill-buffer-hook
+	  (lambda ()
+	    (and (equal (buffer-name) "*EAP*")
+		 (eap-state-change 'quit))))
+
 
 ;;; =========================================== global to eap
 ;;; non-volume state change functions
@@ -571,7 +581,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 ;;; playlist function alias
 (defalias 'app 'eap-display-playlist)
 
-;;; =========================================== other
+;;; =========================================== helper function
 ;;; send synchronous process output to a string
 (defun call-process-to-string (process &optional sep)
   "Start the synchronous process PROCESS (via `call-process') and
@@ -592,3 +602,4 @@ whitespace value."
 	(with-current-buffer standard-output
 	  (apply 'call-process (car process-list) nil t nil (cdr process-list)))))))
 
+(provide 'eap)
