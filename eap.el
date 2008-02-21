@@ -380,7 +380,16 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(erase-buffer)
 	(display-buffer
 	 (apply 'make-comint-in-buffer "EAP" nil "alsaplayer" nil "-i" "text" files))
-	(eap-shrink-window))
+	(eap-shrink-window)
+	;;; set up a simple sentinel
+	(set-process-sentinel
+	 (get-buffer-process "*EAP*")
+	 (lambda (proc ev)
+	   (setq ev (substring ev 0 6)) ;remove the newline
+	   (and (equal ev "finish")
+		(message "AlsaPlayer process ended cleanly, current playlist saved."))
+	   (and (member ev '("killed" "exited"))
+		(message "AlsaPlayer process ended abruptly, current playlist not saved.")))))
     (progn
       (if enqueue-flag
 	  (eap-call-alsaplayer "enqueue" files "Added to play queue.")
@@ -401,7 +410,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
     (progn
       (if (and (file-readable-p "~/.alsaplayer/alsaplayer.m3u")
 	       (not (equal (elt (file-attributes "~/.alsaplayer/alsaplayer.m3u") 7) 0))
-	       (y-or-n-p "Continue where you left off "))
+	       (y-or-n-p "Continue where you left off? "))
 	  (progn
 	    ;; set eap-playlist variable to file contents, and go...
 	    (with-temp-buffer
@@ -545,11 +554,17 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   (setq eap-volume-fade-out-flag (not eap-volume-fade-out-flag))
   (message "Volume fade-out now %s." (if eap-volume-fade-out-flag "active" "inactive")))
 
-;;; add kill-buffer-hook to ensure AlsaPlayer quits cleanly
-(add-hook 'kill-buffer-hook
-	  (lambda ()
-	    (and (equal (buffer-name) "*EAP*")
-		 (eap-state-change 'quit))))
+;;; =========================================== hooks
+;;; add to kill-buffer-hook to ensure AlsaPlayer quits cleanly
+(defun eap-always-kill-buffer-cleanly ()
+  (and (equal (buffer-name) "*EAP*")
+       (eap-state-change 'quit)))
+
+;;; add to kill-emacs-query-functions to ensure AlsaPlayer quits cleanly
+(defun eap-always-quit-emacs-cleanly ()
+  (if (fboundp 'eap-running-p)
+      (if (eap-running-p) (progn (eap-state-change 'quit) t) t)
+    t))
 
 
 ;;; =========================================== global to eap
