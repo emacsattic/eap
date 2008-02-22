@@ -1,1 +1,10 @@
+* Custom definitions
+
+* Secondary music directory (and playlist directory)
+   This would be useful in a case (such as mine) where my main music
+   directory is on a removable drive that I can't always be bothered
+   to switch on.  EAP should use secondary directories if primary
+   directories are't found.
+
+* Scrobble song information to Last.FM
 
