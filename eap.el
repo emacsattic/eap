@@ -632,8 +632,8 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	  (mapc '(lambda (s)
 		   (let* ((aas-list (last (split-string s "/") 3))
 			  (artist (car aas-list))
-			  (album (cadr aas-list))
-			  (song (caddr aas-list)))
+			  (album (car (cdr aas-list)))
+			  (song (car (cdr (cdr aas-list)))))
 		     (insert (format "%28s | %28s | %52s | %3d\n"
 				     (truncate-string-to-width artist 28 nil nil t)
 				     (truncate-string-to-width album 28 nil nil t)
