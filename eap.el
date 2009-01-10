@@ -1,5 +1,5 @@
 ;;; eap.el --- Emacs' AlsaPlayer - "Music Without Jolts"
-;;; Copyright (C) 2007,2008 Sebastian Tennant
+;;; Copyright (C) 2007, 2008, 2009 Sebastian Tennant
 ;;;
 ;;; Author:     Sebastian Tennant <sebyte@gmail.com>
 ;;; Maintainer: Sebastian Tennant <sebyte@gmail.com>
@@ -16,13 +16,13 @@
 ;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;; Boston, MA 02110-1301, USA.
 ;;;
-;;; eap.el is NOT part of GNU Emacs.
+;;; eap.el is NOT (yet) part of GNU Emacs.
 
-
 ;;; Full documentation can be found here:
 ;;;
 ;;;   http://sebyte.org/eap.html
 
+
 ;;; IMPROVEMENTS ON VERSION 0.11
 ;;;
 ;;;   Customization group created.
@@ -38,6 +38,7 @@
 ;;;   Forward and reverse seeking in songs (via the EAP buffer only).
 ;;;
 ;;;   Support for multiple soundcards via eap-alsa-device
+
 
 ;;; INSTALLATION
 ;;; 
@@ -68,7 +69,7 @@
 ;;; If you are happy with these directories you don't need to change
 ;;; or add anything.
 ;;;
-;;; **N.B.** *Don't* make your playlist directory, `eap-playdirs-dir',
+;;; **N.B.** _Don't_ make your playlist directory, `eap-playdirs-dir',
 ;;; a sub-directory of your music directory, `eap-music-dir'. (There's
 ;;; also no need to create these directories yourself.  Emacs'
 ;;; AlsaPlayer will do that for you).
