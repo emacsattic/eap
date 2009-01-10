@@ -1,9 +1,9 @@
 ;;; eap-autoloads.el - Emacs' AlsaPlayer - Music Without Jolts
-;;; Copyright (C) 2007,2008 Sebastian Tennant
+;;; Copyright (C) 2007, 2008, 2009 Sebastian Tennant
 ;;;
 ;;; Author:     Sebastian Tennant <sebyte@gmail.com>
 ;;; Maintainer: Sebastian Tennant <sebyte@gmail.com>
-;;; Version:    0.11
+;;; Version:    0.12
 ;;; Keywords:   audio, player, mp3, ogg
 ;;;
 ;;; This file is free software; you can redistribute it and/or modify
@@ -16,7 +16,7 @@
 ;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;; Boston, MA 02110-1301, USA.
 ;;;
-;;; This file is part of Emacs' AlsaPlayer, which is NOT part of GNU Emacs
+;;; This file is part of Emacs' AlsaPlayer, which is not (yet) part of GNU Emacs
 
 (require 'eap-dired-keybindings)
 
