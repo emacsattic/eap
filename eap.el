@@ -16,193 +16,14 @@
 ;;; the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
 ;;; Boston, MA 02110-1301, USA.
 ;;;
-;;; eap.el is NOT (yet) part of GNU Emacs.
+;;; eap.el is not (yet) part of GNU Emacs.
 
-;;; Full documentation can be found here:
+;;; Installation intructions can be found in the manual, available in
+;;; a number of formats:
 ;;;
-;;;   http://sebyte.org/eap.html
-
-
-;;; IMPROVEMENTS ON VERSION 0.11
-;;;
-;;;   Customization group created.
-;;;
-;;;     M-x customize-group RET eap RET
-;;;
-;;;   is now possible.
-;;;
-;;;   Easy toggling of fade in/fade out functionality.
-;;;
-;;;   Easier installation procedure.
-;;;
-;;;   Forward and reverse seeking in songs (via the EAP buffer only).
-;;;
-;;;   Support for multiple soundcards via eap-alsa-device
-
-
-;;; INSTALLATION
-;;; 
-;;; Firstly, Emacs' AlsaPlayer consists of three files:
-;;;
-;;;   eap.el
-;;;   eap-dired-keybindings.el
-;;;   eap-autoloads.el
-;;;
-;;; Ensure that all three files are located somehwere in your
-;;; `load-path'.  For example, put them in the directory ~/elisp and
-;;; then add this line to your ~/.emacs:
-;;;
-;;;   (add-to-list 'load-path "~/elisp")
-
-;;; Secondly, tell EAP where your music is kept, and where you would
-;;; like to keep your playlist directories (a.k.a. playdirs).  For
-;;; example, add these two lines to your ~/.emacs:
-;;;
-;;;   (setq eap-music-dir    "~/audio-lib"
-;;;         eap-playdirs-dir "~/playdirs")
-;;;
-;;; The default values for these two variables are:
-;;;
-;;;   "~/Music"
-;;;   "~/eap-playdirs"
-;;;
-;;; If you are happy with these directories you don't need to change
-;;; or add anything.
-;;;
-;;; **N.B.** _Don't_ make your playlist directory, `eap-playdirs-dir',
-;;; a sub-directory of your music directory, `eap-music-dir'. (There's
-;;; also no need to create these directories yourself.  Emacs'
-;;; AlsaPlayer will do that for you).
-
-;;; Finally, either add the line:
-;;;
-;;;   (require 'eap-autoloads) ;recommended on principle
-;;;
-;;; or
-;;;
-;;;   (require 'eap)
-;;;
-;;; to your ~/.emacs.  The first form defers loading of the package until
-;;; you actually need it, the second form causes the package to be loaded
-;;; at start time every time.
-
-;;; Restart Emacs (or M-x load-file RET ~/.emacs RET).
-
-
-;;; USAGE
-;;; 
-;;; If you've ever used AlsaPlayer before, the first time you type:
-;;; 
-;;;   M-x eap RET
-;;; 
-;;; you will be asked if you want to continue where you left off?
-;;; Answer positively and Emacs' AlsaPlayer will proceed to play
-;;; through the playlist created the last time you used AlsaPlayer.
-;;; This is possible because AlsaPlayer writes the current playlist to
-;;; disk (~/.alsaplayer/alsaplayer.m3u) upon quit.
-;;; 
-;;; If you've never used AlsaPlayer before you'll simply be taken to
-;;; your music directory in Dired.
-;;; 
-;;; N.B. You don't have to start AlsaPlayer this way. M-x eap RET
-;;;      should be thought of as either a way to pick up where you
-;;;      left off, a short-cut to your music directory, or a short cut
-;;;      to the EAP buffer if EAP is running.
-;;; 
-;;; Access to your music is exclusively through Dired buffers. There
-;;; are three key sequences available to you, each of which can be
-;;; performed on a single file, a set of marked files, a single
-;;; directory, or a set of marked directories. I refer to these simply
-;;; as 'marked' below:
-;;; 
-;;;   M-pp   Start a new playlist consisting of marked (e.g., if point
-;;;          is on an album directory, EAP will start playing that
-;;;          album)
-;;;
-;;;   M-pq   Add marked to the current playlist (a.k.a enqueuing)
-;;;
-;;;   M-ps   Add marked to named playlist
-;;; 
-;;; N.B. Prefix M-pp and M-pq with C-u to ensure that songs are added
-;;;      to the current playlist (or replace the current playlist) in
-;;;      a random order (a.k.a. 'shuffling').
-;;; 
-
-;;; EMACS' ALSAPLAYER BUFFERS
-
-;;; There are two Emacs' AlsaPlayer buffers called *EAP* and
-;;; *EAP Playlist* by default.
-;;;
-;;; Buffer *EAP* is only supposed to be two lines tall, and displays
-;;; the AlsaPlayer process output.  It is not designed to be killed
-;;; ('C-x k').  Doing so kills the AlsaPlayer process very abruptly,
-;;; not allowing it time to save the current playlist to disk.  The
-;;; correct way to stop listening to music is to type 'Q', in the
-;;; *EAP* buffer, or 'M-x apq', from anywhere within Emacs.
-;;;
-;;; If you find killing buffers a hard habit to break you can ensure
-;;; that AlsaPlayer always quits cleanly (and saves your current
-;;; playlist) by adding the function `eap-always-kill-buffer-cleanly'
-;;; to `kill-buffer-hook', like so:
-;;;
-;;;   (add-hook 'kill-buffer-hook 'eap-always-kill-buffer-cleanly)
-;;;
-;;; The same precaution can be taken when killing your Emacs session by
-;;; adding the function `eap-always-kill-emacs-cleanly' to the list
-;;; `kill-emacs-query-functions', like so:
-;;;
-;;;   (add-to-list 'kill-emacs-query-functions 'eap-always-kill-emacs-cleanly)
-;;;
-;;; N.B. If fade-out functionality is active
-;;;      (`eap-volume-fade-out-flag' is non-nil) which it is by
-;;;      default, then adding these hooks will add two or three
-;;;      seconds to each operation.
-;;;
-;;; *EAP Playlist* displays the contents of the current playlist, with
-;;; the currently playing song highlighted.  This buffer is not
-;;; self-refreshing so you may occasionally need to type 'p' to update
-;;; it.
-
-;;; Exactly the same commands are available in each buffer.
-
-;;; KEYS AND COMMANDS
-;;; Key commands are the same in both buffers; the *EAP* buffer and the *EAP Playlist* buffer.
-;;; 
-;;; Playlist/song position commands
-;;; -------------------------------
-;;; Key          Action        Global command 
-;;; < OR [left]  Previous song M-x ap<        
-;;; > OR [right] Next song     M-x ap>        
-;;; SPC          Pause/Play    M-x ap.        
-;;; j            Jump to song  M-x apj        
-;;; 
-;;; Volume adjustment commands
-;;; --------------------------
-;;; Key Action      Global command 
-;;; 0   Volume mute M-x ap0        
-;;; -   Volume soft M-x ap-        
-;;; =   Volume full M-x ap=        
-;;; 
-;;; Other commands
-;;; --------------
-;;; Key Action                              Global command
-;;; p   Show current playlist               M-x app
-;;; m   Show music directory                M-x apm
-;;; v   Show current song                   M-x apv
-;;; s   Add current song to named playlist  M-x aps
-;;; i   Toggle fade-in functionality        M-x api
-;;; o   Toggle fade-out functionality       M-x apo
-;;; Q   Quit EAP                            M-x apq
-;;;
-;;; Commands only available in EAP buffers
-;;; --------------------------------------
-;;; Key    Action
-;;; f      Seek forward (in song)
-;;; b      Seek backward (in song)
-;;; [up]   Volume up
-;;; [down] Volume down
-;;; k      Keep window small
-;;; q      Bury EAP buffers
+;;;   ./eap.info
+;;;   ./eap-manual.txt
+;;;   ./eap-manual-html/index.html
 
 
 ;;; ensure dired keybindings are loaded
@@ -225,7 +46,7 @@
   "Occasionally you will come across a song that starts abruptly,
 causing an unpleasant jolt to your idyllic happiness.  Always use
 volume-fade-in to eliminate jolts entirely.  Toggle this value
-with 'i' from within EAP buffers, or 'M-x api' from anywhere
+with 'i' from within Emacs' AlsaPlayer buffers, or 'M-x api' from anywhere
 within Emacs."
   :group 'EAP
   :version "22.2.1"
@@ -235,7 +56,7 @@ within Emacs."
   "If you ever tire of songs  before they are finished,
 skipping to the next song will cause an unpleasant jolt to your
 idyllic happiness.  Eliminate this jolt by always using
-volume-fade-out.  Toggle this value 'o' from within EAP buffers,
+volume-fade-out.  Toggle this value 'o' from within Emacs' AlsaPlayer buffers,
 or 'M-x apo' from anywhere within Emacs."
   :group 'EAP
   :version "22.2.1"
@@ -245,16 +66,16 @@ or 'M-x apo' from anywhere within Emacs."
 
 ;;; songs
 (defvar eap-playlist '())
-(defcustom eap-music-dir "~/Music"
-  "The directory containing your music library.  EAP will create
+(defcustom eap-music-library "~/Music"
+  "The directory containing your music library.  Emacs' AlsaPlayer will create
 this directory for you if it doesn't exist."
   :group 'EAP
   :version "22.2.1"
   :type '(directory))
-(defcustom eap-playdirs-dir "~/eap-playdirs"
-  "The directory where your playdirs (EAP playlists) are stored.
-  This directory MUST NOT be a sub-directory of `eap-music-dir'.
-EAP will create this directory for you if it doesn't exist."
+(defcustom eap-playlist-library "~/eap-playlist-library"
+  "The directory where your Emacs' AlsaPlayer playlists are stored.
+This directory MUST NOT be a sub-directory of `eap-music-library'.
+Emacs' AlsaPlayer will create this directory for you if it doesn't exist."
   :group 'EAP
   :version "22.2.1"
   :type '(directory))
@@ -278,7 +99,7 @@ instance."
   :type '(hook))
 (defcustom eap-playlist-font-lock-keywords '((".*\\* ?$" . font-lock-keyword-face)
 					     (".*Pos ?$" . font-lock-builtin-face))
-  "Alter the appearance of the EAP playlist buffer. Each cons in
+  "Alter the appearance of the Emacs' AlsaPlayer playlist buffer. Each cons in
 this alist must be of the form (REGEXP . FACE)."
   :group 'EAP
   :version "22.2.1"
@@ -298,7 +119,7 @@ this alist must be of the form (REGEXP . FACE)."
   :version "22.2.1"
   :type '(string))
 (defcustom eap-playlist-buffer-name "*EAP Playlist*"
-  "Name of the EAP playlist buffer.  Choose a name beginning with
+  "Name of the Emacs' AlsaPlayer playlist buffer.  Choose a name beginning with
   a SPC character to hide the buffer from buffer listings."
   :group 'EAP
   :version "22.2.1"
@@ -317,7 +138,7 @@ this alist must be of the form (REGEXP . FACE)."
 	;; fixed volume keys
 	("0"     . ap0) ("-" . ap-) ("=" . ap=) ;mute, soft & full volume
 	;; eap-to-dired keys
-	("m"     . apm) ("v" . apv) ("s" . aps) ;music-dir, view track & symlink track to playdir
+	("m"     . apm) ("v" . apv) ("s" . aps) ;music-dir, view track & symlink track to playlist-library
 	;; other keys
 	("p"     . app) ("i" . api) ("o" . apo) ;playlist, toggle fade-in, toggle fade-out
 	;; functions only acccessible from within an EAP buffer
@@ -336,10 +157,10 @@ this alist must be of the form (REGEXP . FACE)."
 		     (unless (eap-volume-at-mute-p)
 		       (eap-volume-change '-)
 		       (setq eap-volume-restore eap-volume-knob))))
-	("c"     . (lambda (dir) (interactive "sChange value of eap-music-dir to: ")
+	("c"     . (lambda (dir) (interactive "sChange value of eap-music-library to: ")
 		     (if (file-accessible-directory-p dir)
-			 (setq eap-music-dir dir)
-		       (message "%s not accessible. eap-music-directory unchanged." dir))))
+			 (setq eap-music-library dir)
+		       (message "%s not accessible. eap-music-libraryectory unchanged." dir))))
 	("k"     . eap-shrink-window) ;used in code (below)
 	("q"     . (lambda () (interactive) ; bury EAP buffers
 		     (delete-windows-on eap-buffer-name) (bury-buffer eap-buffer-name)
@@ -412,7 +233,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	  (if eap-volume-fade-in-flag
 	      (eap-volume-fade-in)
 	    (eap-volume-change eap-volume-restore))))
-    (message "EAP not running.")))
+    (message "Emacs' AlsaPlayer not running.")))
 
 
 ;;; =========================================== volume control
@@ -530,9 +351,9 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	      (setq eap-playlist (remove "" (split-string (buffer-string) "\n"))))
 	    (eap-dwim nil nil))
 	;; just bring up music directory in Dired
-	(if (file-accessible-directory-p eap-music-dir)
-	    (dired eap-music-dir)
-	  (message "Music directory (%s) not found or inaccessible." eap-music-dir)
+	(if (file-accessible-directory-p eap-music-library)
+	    (dired eap-music-library)
+	  (message "Music directory (%s) not found or inaccessible." eap-music-library)
 	)))))
 
 (defun eap-shrink-window ()
@@ -563,7 +384,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 ;;; no need to auto-load this as well as the alias (apm)
 (defun eap-dired-music-dir ()
   (interactive)
-  (dired-other-window eap-music-dir))
+  (dired-other-window eap-music-library))
 
 (defun eap-dired-current-track ()
   (interactive)
@@ -576,7 +397,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 (defun eap-symlink-current-track ()
   (interactive)
   (eap-dired-current-track)
-  (dired-eap-symlink-to-playdir))
+  (dired-eap-symlink-to-playlist-library))
 
 
 ;;; =========================================== dired to eap
@@ -599,22 +420,22 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
     (eap-dwim files t))) ;add files to current playlist
 
 ;;;###autoload
-(defun dired-eap-symlink-to-playdir ()
+(defun dired-eap-symlink-to-playlist-library ()
   (interactive)
   (let ((dired-dwim-target t))
-    ;; create the playdirs directory if necessary
-    (or (file-accessible-directory-p eap-playdirs-dir)
-	(make-directory eap-playdirs-dir t))
-    ;; create a playdir if necessary
+    ;; create the playlist-library directory if necessary
+    (or (file-accessible-directory-p eap-playlist-library)
+	(make-directory eap-playlist-library t))
+    ;; create a playlist-library if necessary
     (or (split-string
 	 (shell-command-to-string
 	  (format "find %s -mindepth 1 -type d -print"
-		  (shell-quote-argument eap-playdirs-dir))))
-	(make-directory (concat eap-playdirs-dir "/Favourite songs")))
+		  (shell-quote-argument eap-playlist-library))))
+	(make-directory (concat eap-playlist-library "/Favourite songs")))
     ;; go
-    (dired-other-window eap-playdirs-dir)
+    (dired-other-window eap-playlist-library)
     (other-window 1)
-    (let ((default-directory eap-playdirs-dir))
+    (let ((default-directory eap-playlist-library))
       (dired-do-symlink))))
 
 
@@ -654,7 +475,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	(toggle-read-only)
 	(pop-to-buffer eap-buffer-name)		;return to *EAP*
 	(eap-shrink-window))
-    (message "Emacs' AlsaPlayer isn't running :-(")))
+    (message "Emacs' AlsaPlayer isn't running")))
 
 (defun eap-toggle-fade-in ()
   (interactive)
@@ -730,3 +551,7 @@ whitespace value."
 	  (apply 'call-process (car process-list) nil t nil (cdr process-list)))))))
 
 (provide 'eap)
+
+;;; Local Variables:
+;;; fill-column:70
+;;; End:

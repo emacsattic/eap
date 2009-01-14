@@ -1,195 +1,254 @@
-This is eap.info, produced by makeinfo version 4.11 from eap.texi.
+This is eap.info, produced by makeinfo version 4.11 from
+/root/eap/eap-program-ssh/eap.texi.
+
+This manual (last modified: <14/01/2009 10:53:26 UTC>) documents
+Emacs' AlsaPlayer version 0.12 (Gaza Remembered).
+
+   Copyright (C) 2007,2008,2009 Sebastian Tennant <sebyte@gmail.com>.
+
+     Permission is granted to copy, distribute and/or modify this
+     document under the terms of the GNU Free Documentation License,
+     Version 1.3 or any later version published by the Free Software
+     Foundation, with one Invariant Section; 'Music Without Jolts', no
+     Front-Cover Texts and no Back-Cover Texts.  A copy of the
+     license is included in the section entitled 'GNU Free
+     Documentation License'.
 
 
-File: eap.info,  Node: Top,  Next: Technical overview,  Prev: (dir),  Up: (dir)
+File: eap.info,  Node: Top,  Next: Obtaining Emacs' AlsaPlayer,  Prev: (dir),  Up: (dir)
 
-Overview
-********
+Emacs' AlsaPlayer - Music Without Jolts
+***************************************
 
-This manual corresponds to version 0.12 of Emacs' AlsaPlayer
+This manual (last modified: <14/01/2009 10:53:26 UTC>) documents
+Emacs' AlsaPlayer version 0.12 (Gaza Remembered), an Emacs interface
+to the AlsaPlayer (http://www.alsaplayer.org) PCM audio player.
 
+   Emacs' AlsaPlayer is referred to as "EAP" (pronounced 'eep')
+throughout the rest of this manual.
 
 * Menu:
 
-* Technical overview::
-* Feature list::
 * Obtaining Emacs' AlsaPlayer::
-* FAQs::
+* Music Without Jolts::
+* Feature list::
+* Brief technical overview::
 * Installation::
-* Usage::
+* Starting Emacs' AlsaPlayer::
+* Emacs' AlsaPlayer Buffers::
 * Keys and commands::
-* Keeping up to date - Mailing lists & TODOs::
-* Footnotes::
+* Customising Emacs' AlsaPlayer::
+* Mailing lists::
+* TODOs::
+* Known bugs and limitations::
+* Possibly asked questions::
+
+ --- The Detailed Node Listing ---
+
+Installation
+
+* Installing AlsaPlayer::
+* Installing Emacs' AlsaPlayer::
+
+Keys and commands
+
+* Playlist/song position commands::
+* Volume adjustment commands::
+* Other commands::
+* Commands only available in EAP buffers::
 
 
-File: eap.info,  Node: Technical overview,  Next: Feature list,  Prev: Top,  Up: Top
+File: eap.info,  Node: Obtaining Emacs' AlsaPlayer,  Next: Music Without Jolts,  Prev: Top,  Up: Top
 
-1 Technical overview
-********************
-
-Emacs' AlsaPlayer is an Emacs (http://directory.fsf.org/project/emacs/)
-interface to AlsaPlayer (http://alsaplayer.org):
-
-     AlsaPlayer is a new type of PCM player. It is heavily
-     multi-threaded and tries to excercise the ALSA library and driver
-     quite a bit. It has some very interesting features unique to *nix
-     players. The goal is to create a fully pluggable framework for
-     playback of all sorts of media with the focus on PCM audio data.
-
-   Despite the name, AlsaPlayer supports a wide array of different audio
-output interfaces including the one-time default OSS, Esound, NAS,
-Sparc, SGI and JACK (http://jack-audio.org).
-
-   Emacs' AlsaPlayer manages calls to AlsaPlayer via Emacs' synchronous
-process routines.  In terms of its interface, three new key-bindings
-are provided in Dired buffers, and that's pretty much it really.  Named
-playlists are simply directories of symbolic links and EAP leverages
-the power of Dired to make adding these symbolic links a snip.
-
-
-
-File: eap.info,  Node: Feature list,  Next: Obtaining Emacs' AlsaPlayer,  Prev: Technical overview,  Up: Top
-
-2 Feature list
-**************
-
-   * Music Without Jolts
-
-   * Easily enqueue songs from dired buffers
-
-   * Easily replace current playlist from dired buffers
-
-   * Optionally enqueue/replace songs in a random order
-
-   * Perform all common music player actions (pause, previous, next,
-     jump e.t.c) from anywhere in Emacs (no need to switch buffers)
-
-   * Easily add the current song to a named playlist from anywhere (no
-     need to switch buffers)
-
-   * Unlimited named playlists
-
-   * Easy toggling of fade in/out functionality. (Gradually fading in
-     and out is no good if you're transcribing an interview)
-
-   * Current playlist preserved from session to session (thanks to
-     AlsaPlayer, not EAP)
-
-
-
-File: eap.info,  Node: Obtaining Emacs' AlsaPlayer,  Next: FAQs,  Prev: Feature list,  Up: Top
-
-3 Obtaining Emacs' AlsaPlayer
+1 Obtaining Emacs' AlsaPlayer
 *****************************
 
-Emacs' AlsaPlayer is a project (https://gna.org/projects/eap/) kindly
-hosted by Gna! (https://gna.org):
+EAP is a project (https://gna.org/projects/eap/) kindly hosted by
+Gna! (https://gna.org):
 
-*Latest stable release*
-     http://download.gna.org/eap/eap.el
-     (http://download.gna.org/eap/eap.el)
+Latest stable release
 
-*Daily snapshot of latest SVN version*
-     http://svn.gna.org/daily/eap-snapshot.tar.gz
-     (http://svn.gna.org/daily/eap-snapshot.tar.gz)
+     `http://download.gna.org/eap/eap.el'
 
-*Anonymous SVN over HTTP*
+Daily snapshot of latest SVN version
+
+     `http://svn.gna.org/daily/eap-snapshot.tar.gz'
+
+Anonymous SVN over HTTP
+
      `svn co http://svn.gna.org/svn/eap/trunk eap'
 
-*Anonymous SVN over SVN (TCP 3690)*
+Anonymous SVN over SVN (TCP 3690)
+
      `svn co svn://svn.gna.org/svn/eap/trunk eap'
 
-   Installation and usage instructions are detailed below and can also
-be found at the top of the file, eap.el.
+
+
+File: eap.info,  Node: Music Without Jolts,  Next: Feature list,  Prev: Obtaining Emacs' AlsaPlayer,  Up: Top
+
+2 Music Without Jolts
+*********************
+
+What is a 'jolt' exactly?  According to the GNU Collaborative
+International Dictionary of English
+(http://www.ibiblio.org/webster/), to jolt someone is:
+
+     To stun or shock or change the mental state of a person
+     suddenly, as if with a blow; as, the sight of the house on fire
+     jolted him into action; his mother's early death jolted his
+     idyllic happiness. [PJC]
+
+So there we have it.
+
+   Imagine, if you will, that you are listening to the elegiac, yet
+somehow uplifting title track of the album 'Room To Roam'
+(http://en.wikipedia.org/wiki/Room_to_Roam) by British folk rock band
+The Waterboys (http://mikescottwaterboys.com), and decide that it
+doesn't quite suit your mood at that particular moment in time.  What
+do you do?  Well, let's say you tell your audio player to skip
+forward to the next song in the current playlist.  Now imagine that
+your audio player is in what's commonly known as 'shuffle mode' and
+the next song happens to be 'War On War'
+(http://en.wikipedia.org/wiki/War_on_War) by American alt country band
+Wilco (http://wilcoworld.net).  Unless sufficient care is taken (and
+EAP is the only audio player I know of that takes sufficient care),
+you will undoubtedly endure a significant jolt to your idyllic
+happiness.
+
+   In short, listen to your music with EAP (with all volume related
+settings at their default values) and _anything you do_ that would
+ordinarily result in an abrupt change of volume is preceeded by a
+gentle volume fade, ensuring that jolts to your idyllic happiness are
+a thing of the past (power cuts excepted).
+
+   Finally, your personal idyllic happiness is part of a wider
+struggle, namely that of trying to rid our environment of jolts
+_entirely_.  For most people, Vim is the once popular scouring powder
+produced by Lever Brothers from 1904 to 1993 and reputedly used by
+Francis Bacon as a substitute for toothpaste, but for a very few
+people it is a program that can be used for editing text.
+
+   If someone offers you Vim (the program) or makes Vim (the program)
+available to you in any way, *do not accept it!*  Every attempt to
+extend Vim (the program) so that it performs adequately as a
+jolt-eliminating music player has resulted in total and unmitigated
+failure and each time someone adopts Vim (the program) as their
+editor of choice the struggle to rid our environment of jolts suffers
+a significant, demoralising setback; significant because it defeats
+our stated aim, and demoralising because users of Vim (the program)
+often develop a strange, irrational loyalty to it, accompanied by an
+equally unfathomable prejudice towards Emacs.  When that happens we
+have what can only be described as an immovable jolt to contend with.
+
+   Persuading users of Vim (the program) to switch to Emacs for the
+sake of the environment, _and not for any other reason_, has been
+known to work in a few well known (though poorly documented) cases.
+
+
+File: eap.info,  Node: Feature list,  Next: Brief technical overview,  Prev: Music Without Jolts,  Up: Top
+
+3 Feature list
+**************
+
+   * Music Without Jolts.  *Note Music Without Jolts::.
+
+   * Easily enqueue songs from dired buffers.  *Note Starting Emacs'
+     AlsaPlayer::.
+
+   * Easily replace current playlist from dired buffers.  *Note
+     Starting Emacs' AlsaPlayer::.
+
+   * Optionally enqueue/replace songs in a random order (shuffle
+     mode).  *Note Starting Emacs' AlsaPlayer::.
+
+   * Global control of all common music player actions (pause,
+     previous, next, jump e.t.c) from anywhere in Emacs, i.e., no
+     need to switch buffers.  *Note Playlist/song position commands::.
+
+   * Easily add the current song to a named playlist from anywhere
+     (no need to switch buffers).  *Note Other commands::.
+
+   * Unlimited named playlists, implemented as directories of
+     symbolic links (which is good for other purposes, such as
+     burning CDs).
+
+   * Easy toggling of fade in/out functionality. Gradually fading out
+     is no good if you're transcribing an interview for instance.
+     *Note Other commands::.
+
+   * Current playlist preserved from session to session (thanks to
+     AlsaPlayer, not EAP).  *Note Starting Emacs' AlsaPlayer::.
+
+   * Support for multiple sound cards.  *Note Customising Emacs'
+     AlsaPlayer::.
+
+   * Easy customisation of EAP through the popular Customization
+     framework.  *Note Customising Emacs' AlsaPlayer::.
 
 
 
-File: eap.info,  Node: FAQs,  Next: Installation,  Prev: Obtaining Emacs' AlsaPlayer,  Up: Top
+File: eap.info,  Node: Brief technical overview,  Next: Installation,  Prev: Feature list,  Up: Top
 
-4 FAQs
-******
+4 Brief technical overview
+**************************
 
-*Music Without Jolts - What's all that about?*
-     Well, it's about jolts.  More specifically, it's about avoiding
-     them.  The GNU Collaborative International Dictionary of English
-     (http://www.ibiblio.org/webster/) states that to jolt someone is:
+EAP is an Emacs interface to AlsaPlayer (http://alsaplayer.org):
 
-          To stun or shock or change the mental state of a person
-          suddenly, as if with a blow; as, the sight of the house on
-          fire jolted him into action; his mother's early death _jolted
-          his idyllic happiness_. [PJC]
+AlsaPlayer
 
-     So there we have it. With every other music player I've tried,
-     deciding that you've had enough of _this_ song (and that you want
-     to listen to _that_ one instead) will result in a greater or
-     lesser jolt to your idyllic happiness. Why? Because no attention
-     is paid to _volume control_. With Emacs' AlsaPlayer anything that
-     would otherwise affect the smooth flow of the music is 'wrapped'
-     in a gradual..  volume... fade... ensuring that *_jolts to your
-     idyllic happiness are a thing of the past_*.(1)
+     The following description is taken from the AlsaPlayer website
+     (to which a link is provided above):
 
-*Does AlsaPlayer play Ogg Vorbis files?*
-     The question should really be, does AlsaPlayer play mp3 files?  I
-     didn't write AlsaPlayer (only the Emacs interface), but I happen
-     to know that it takes a pretty dim view of always playing mp3s.
-     Even if you only play oggs (http://www.fsf.org/news/playogg.html)
-     now and again, you'll be surprised how much you go up in its
-     estimation.
+          AlsaPlayer is a new type of PCM player. It is heavily
+          multi-threaded and tries to excercise the ALSA library and
+          driver quite a bit. It has some very interesting features
+          unique to *nix players. The goal is to create a fully
+          pluggable framework for playback of all sorts of media with
+          the focus on PCM audio data.
 
-*Why commit yourself to one particular back-end?*
-     I like Alsplayer.  I like the fact that the designers thought to
-     include a 'text' interface (no GUI) and it's CLI (command line
-     interface) is especiialy clean and simple.
+     Despite the name, AlsaPlayer supports a wide array of different
+     audio output interfaces, including the one-time GNU/Linux
+     default output interface; OSS.  Other output interfaces
+     supported include Esound, NAS, Sparc, SGI and JACK
+     (http://jack-audio.org).
 
-     People are welcome to request/implement support for other players
-     but the name, Emacs' AlsaPlayer is here to stay.
+Emacs' AlsaPlayer
 
+     EAP manages calls to AlsaPlayer via Emacs' synchronous process
+     routines and two new key bindings in Dired buffers provide the
+     interface between your music library and AlsaPlayer.  Named
+     playlists are simply directories of symbolic links and a third
+     Dired key binding is provided to facilitate the easy addition of
+     symbolic links to these directories.
 
-   ---------- Footnotes ----------
-
-   (1) Your idyllic happiness is actually part of a wider struggle,
-namely, to rid our environment of jolts @emph{entirely}, and I have to
-say that our cause is not assisted when the editor Vi (a.k.a Vim) is
-chosen over Emacs.  It's a well known fact that each and every attempt
-to extend Vi so that it performs adequately as a jolt-eliminating music
-player has resulted in total and unmitigated failure.  Despite this, a
-certain number of people @emph{still} choose Vi as their editor of
-choice every year. Don't be one of them! If you happen to
-@emph{already} use Vi, then I'm somewhat surprised you even found this
-page, but more importantly, @emph{it's time to switch}. Perhaps you
-harbour some kind of strange, irrational loyalty to Vi, accompanied by
-an equally unfathomable prejudice towards Emacs?  Don't worry if you
-do. This is actually quite common amongst Vi users.  Telling yourself
-that you're switching to Emacs to help rid the environment of jolts
-(and @emph{not} for any other reason), has been known to help in a few
-documented cases.
 
 
-File: eap.info,  Node: Installation,  Next: Usage,  Prev: FAQs,  Up: Top
+File: eap.info,  Node: Installation,  Next: Starting Emacs' AlsaPlayer,  Prev: Brief technical overview,  Up: Top
 
 5 Installation
 **************
 
+EAP is an Emacs interface to AlsaPlayer (http://www.alsaplayer.org)
+so, not surprisingly, it won't work without it.
+
 * Menu:
 
 * Installing AlsaPlayer::
-* Installing Emacs' AlsaPlayer - eap.el::
+* Installing Emacs' AlsaPlayer::
 
 
-File: eap.info,  Node: Installing AlsaPlayer,  Next: Installing Emacs' AlsaPlayer - eap.el,  Prev: Installation,  Up: Installation
+File: eap.info,  Node: Installing AlsaPlayer,  Next: Installing Emacs' AlsaPlayer,  Prev: Installation,  Up: Installation
 
 5.1 Installing AlsaPlayer
 =========================
 
-On a Debian GNU/Linux system a minimal working AlsaPlayer requires that
-these two packages:
-
+On a Debian GNU/Linux system a minimal working AlsaPlayer requires
+that these two packages:
 
      alsaplayer-common
      alsaplayer-text
 
-   and one of these:
-
+and one of these:
 
      alsaplayer-alsa
      alsaplayer-esd
@@ -197,125 +256,175 @@ these two packages:
      alsaplayer-nas
      alsaplayer-oss
 
-   be installed.
+be installed.
 
    Choose the last package according to your audio output interface.
 AlsaPlayer is designed to work closely with the ALSA
-(http://alsa-project.org) system _whenever possible_, i.e., it works
-perfectly well without it.
+(http://www.alsa-project.org) system _when it's available_, i.e., it
+works perfectly well without it.
 
    Test the text interface by issuing the command:
 
-
-     $ alsaplayer -i text some-audio-file.ogg
-
+   `alsaplayer -i text some-audio-file.ogg'
 
 
-File: eap.info,  Node: Installing Emacs' AlsaPlayer - eap.el,  Prev: Installing AlsaPlayer,  Up: Installation
+File: eap.info,  Node: Installing Emacs' AlsaPlayer,  Prev: Installing AlsaPlayer,  Up: Installation
 
-5.2 Installing Emacs' AlsaPlayer - eap.el
-=========================================
+5.2 Installing Emacs' AlsaPlayer
+================================
 
-Installing Emacs' AlsaPlayer is now much easier.  Instructions for
-installing AlsaPlayer version 0.11 can be found here
-(installing_eap_0.11.html).
-
-   Firstly, Emacs' AlsaPlayer consists of three files; `eap.el',
+EAP consists of three separate files; `eap.el',
 `eap-dired-keybindings.el' and `eap-autoloads.el'.  Ensure that all
 three files are located somehwere in your `load-path'.  For example,
-put them in the directory ~/elisp and then add this line to your
+put them in the directory `~/elisp' and then add this line to your
 `~/.emacs':
-
 
      (add-to-list 'load-path "~/elisp")
 
-   Secondly, tell EAP where your music is kept, and where you would like
-to keep your playlist directories (a.k.a. playdirs).  For example, add
-these two lines to your ~/.emacs:
+   Next you must tell EAP the location of your music library, and
+where you would like to keep your playlists.  For example, add these
+lines to your ~/.emacs:
 
+     (setq eap-music-library
+           "~/my-music-library" ;default value "~/Music"
 
-     (setq eap-music-dir    "/home/bob/music"
-           eap-playdirs-dir "/home/bob/eap-playlists")
+           eap-playlist-library
+           "~/eap-playlists") ;default value "~/eap-playlist-library"
 
-   *N.B.* _Don't_ make your playlist directory, `eap-playdirs-dir', a
-sub-directory of your music directory, `eap-music-dir'. (There's also no
-need to create the directory yourself.  Emacs' AlsaPlayer will do that
-for you).
+   *Important note:* Don't make your playlist library a sub-directory
+of your music library!
+
+   EAP will create both directories for you if they don't exist.  On
+the other hand, if you are happy with the default locations you
+needn't add these lines to your `~/.emacs' file at all.
 
    Finally, either add the line:
-
 
      (require 'eap-autoloads) ;recommended on principle
 
    or
 
-
      (require 'eap)
 
-   depending whether or not you want to defer loading the package until
-you need it.  (The first form will defer loading, the second form will
-load the package at start time).
+   to your `~/.emacs' file.
 
-   Restart Emacs (or `M-x load-file RET ~/.emacs RET').
+   The first form defers loading of the package until you actually
+need it.  The second form will causes the package to be loaded at
+start time every time.
+
+   Save your `~/.emacs' file and restart Emacs, or issue the command:
+
+   `M-x load-file RET ~/.emacs RET'.
+
+
+File: eap.info,  Node: Starting Emacs' AlsaPlayer,  Next: Emacs' AlsaPlayer Buffers,  Prev: Installation,  Up: Top
+
+6 Starting Emacs' AlsaPlayer
+****************************
+
+EAP can be started by issuing the command `M-x eap' from anywhere
+within Emacs.
+
+`M-x eap'
+
+     First of all, a note about how AlsaPlayer behaves.  When
+     AlsaPlayer exits cleanly it writes its current playlist to a
+     playlist file (usually `~/.alsaplayer/alsaplayer.m3u').
+
+     Assuming EAP is not already running, when you issue the command
+     `M-x eap' EAP checks for the presence of this playlist file and
+     if it is found (and has non-zero length) EAP will ask you if
+     you'd like to continue where you left off.  Answer positively
+     and EAP will create a playlist from the contents of this file
+     and proceed to play it.  If the file is not found (or is of zero
+     length) your music library is displayed in Dired.
+
+     If EAP is running when you issue the command `M-x eap' the EAP
+     buffer (default name `*EAP*') is displayed.
+
+   EAP may also be started via one of the three Dired keybindings,
+all of which can be performed on a single file, a set of marked
+files, a single directory, or a set of marked directories.  I refer
+to these simply as "marked" below.
+
+`M-p p'
+
+     Start a new playlist consisting of marked.  Use a prefix
+     argument (`C-u') to shuffle marked in the new playlist.
+
+`M-p q'
+
+     Add marked to the current playlist (a.k.a enqueuing).  Use a
+     prefix argument (`C-u') to shuffle marked before they are added.
+
+`M-p s'
+
+     Add marked to named playlist.  This command will not start
+     AlsaPlayer or have any effect on the current playlist if
+     AlsaPlayer is already running.
+
+
+File: eap.info,  Node: Emacs' AlsaPlayer Buffers,  Next: Keys and commands,  Prev: Starting Emacs' AlsaPlayer,  Up: Top
+
+7 Emacs' AlsaPlayer Buffers
+***************************
+
+There are two Emacs' AlsaPlayer buffers, called `*EAP*' and `*EAP
+Playlist*' by default, although these names are customisable.  *Note
+Customising Emacs' AlsaPlayer::.
+
+   Exactly the same commands are available in each buffer.  *Note
+Keys and commands::.
+
+`*EAP*'
+
+     Buffer `*EAP*' is only supposed to be two lines tall, and
+     displays the AlsaPlayer process output.  It is not designed to
+     be killed (`C-x k').  Doing so kills the AlsaPlayer process very
+     abruptly, not allowing it time to save the current playlist to
+     disk.  The correct way to stop listening to music is to type
+     `Q', in the `*EAP*' buffer, or `M-x apq', from anywhere within
+     Emacs.
+
+     If you find killing buffers a hard habit to break you can ensure
+     that AlsaPlayer always quits cleanly (and saves your current
+     playlist) by adding the function
+     `eap-always-kill-buffer-cleanly' to `kill-buffer-hook'.  This
+     isn't as hard as it sounds.  Simply add the following lines to
+     your `~/.emacs':
+
+          (add-hook 'kill-buffer-hook
+                    'eap-always-kill-buffer-cleanly)
+
+     The same precaution can be taken when killing your Emacs session
+     by adding the function `eap-always-kill-emacs-cleanly' to the
+     list `kill-emacs-query-functions'.  Simply add these lines to
+     your `~/.emacs' as well:
+
+          (add-to-list 'kill-emacs-query-functions
+                       'eap-always-kill-emacs-cleanly)
+
+     *N.B.* If EAP is doing its best to avoid jolts to your idyllic
+     happiness (*note Music Without Jolts::), which it does by
+     default, then adding these hooks will add two or three seconds
+     to each operation.
+
+`*EAP Playlist*'
+
+     The `*EAP Playlist*' buffer displays the contents of the current
+     playlist, with the currently playing song highlighted.  This
+     buffer is not self-refreshing so you may occasionally need to
+     type `p' to update it.
 
 
 
-File: eap.info,  Node: Usage,  Next: Keys and commands,  Prev: Installation,  Up: Top
+File: eap.info,  Node: Keys and commands,  Next: Customising Emacs' AlsaPlayer,  Prev: Emacs' AlsaPlayer Buffers,  Up: Top
 
-6 Usage
-*******
-
-If you've ever used AlsaPlayer before, the first time you type:
-
-
-     M-x eap RET
-
-   you may well be asked if you want to continue where you left off?
-Answer positively and Emacs' AlsaPlayer will proceed to play through
-the playlist created the last time you used AlsaPlayer.
-
-   If you've never used AlsaPlayer before you'll simply be taken to your
-music directory in Dired.
-
-   *N.B.* You don't _have_ to start AlsaPlayer this way.  `M-x eap RET'
-is simply a way to pick up where you left off, a short-cut to your music
-directory, or a short cut to the EAP buffer if EAP is running.
-
-   Access to your music is exclusively through Dired buffers.  There are
-three key sequences available to you, each of which can be performed on
-a single file, a set of marked files, a single directory, or a set of
-marked directories.  I refer to these simply as 'marked' below:
-
-*M-pp*
-     Start a new playlist consisting of marked (e.g., if point is on an
-     album directory, EAP will start playing that album)
-
-*M-pq*
-     Add marked to the current playlist (a.k.a enqueuing)
-
-*M-ps*
-     Add marked to named playlist
-
-   *N.B.* Prefix `M-pp' and `M-pq' with `C-u' to ensure that songs are
-added to the current playlist (or replace the current playlist) in a
-random order (a.k.a. shuffling).
-
-   Finally, there are two EAP buffers; `*EAP*' and `*EAP Playlist*'.
-`*EAP*' displays the AlsaPlayer process output, and is never usually
-more than two lines tall.  `*EAP Playlist*' displays the contents of
-the current playlist, with the currently playing song highlighted.
-This buffer is not self-refreshing so you may occasionally need to type
-`p' to update it.
-
-
-
-File: eap.info,  Node: Keys and commands,  Next: Keeping up to date - Mailing lists & TODOs,  Prev: Usage,  Up: Top
-
-7 Keys and commands
+8 Keys and commands
 *******************
 
-Key commands are the same in both buffers; the `*EAP*' buffer and the
-`*EAP Playlist*' buffer.
+The same set of key commands listed below are available in both EAP
+buffers; `*EAP*' and `*EAP Playlist*' by default.
 
 * Menu:
 
@@ -327,112 +436,186 @@ Key commands are the same in both buffers; the `*EAP*' buffer and the
 
 File: eap.info,  Node: Playlist/song position commands,  Next: Volume adjustment commands,  Prev: Keys and commands,  Up: Keys and commands
 
-7.1 Playlist/song position commands
+8.1 Playlist/song position commands
 ===================================
 
-Key                      Action                   Global command
---------------------------------------------------------------------------- 
-`<  OR  [left]'          Previous song            `M-x ap<'
-`>  OR  [right]'         Next song                `M-x ap>'
-`SPC'                    Pause/Play               `M-x ap.'
-`j'                      Jump to song             `M-x apj'
+Key                     Action                  Global command
+------------------------------------------------------------------------ 
+`<  OR  [left]'         Previous song           `M-x ap<'
+`>  OR  [right]'        Next song               `M-x ap>'
+`SPC'                   Pause/Play              `M-x ap.'
+`j'                     Jump to song            `M-x apj'
 
 
 File: eap.info,  Node: Volume adjustment commands,  Next: Other commands,  Prev: Playlist/song position commands,  Up: Keys and commands
 
-7.2 Volume adjustment commands
+8.2 Volume adjustment commands
 ==============================
 
-Key                      Action                   Global command
---------------------------------------------------------------------------- 
-`0'                      Volume mute              `M-x ap0'
-`-'                      Volume soft              `M-x ap-'
-`='                      Volume full              `M-x ap='
+Key            Action                       Global command
+------------------------------------------------------------------------- 
+`0'            Volume mute                  `M-x ap0'
+`-'            Volume soft                  `M-x ap-'
+`='            Volume full                  `M-x ap='
 
 
 File: eap.info,  Node: Other commands,  Next: Commands only available in EAP buffers,  Prev: Volume adjustment commands,  Up: Keys and commands
 
-7.3 Other commands
+8.3 Other commands
 ==================
 
-Key                      Action                   Global command
---------------------------------------------------------------------------- 
-`p'                      Show current playlist    `M-x app'
-`m'                      Show music directory     `M-x apm'
-`v'                      Show current song        `M-x apv'
-`s'                      Add current song to      `M-x aps'
-                         named playlist           
-`i'                      Toggle fade-in           `M-x api'
-                         functionality            
-`o'                      Toggle fade-out          `M-x apo'
-                         functionality            
-`Q'                      Quit EAP                 `M-x eaq'
+Key            Action                       Global command
+------------------------------------------------------------------------- 
+`p'            Show current playlist        `M-x app'
+`m'            Show music directory         `M-x apm'
+`v'            Show current song            `M-x apv'
+`s'            Add current song to named    `M-x aps'
+               playlist                     
+`i'            Toggle fade-in               `M-x api'
+               functionality                
+`o'            Toggle fade-out              `M-x apo'
+               functionality                
+`Q'            Quit EAP                     `M-x eaq'
 
 
 File: eap.info,  Node: Commands only available in EAP buffers,  Prev: Other commands,  Up: Keys and commands
 
-7.4 Commands only available in EAP buffers
+8.4 Commands only available in EAP buffers
 ==========================================
 
-Key                                  Action
--------------------------------------------------------------------------- 
-`f'                                  Seek forward (in song)
-`b'                                  Seek backward (in song)
-`[up]'                               Volume up
-`[down]'                             Volume down
-`k'                                  Keep window small
-`q'                                  Bury EAP buffers
+Key                                 Action
+------------------------------------------------------------------------ 
+`f'                                 Seek forward
+`b'                                 Seek backward
+`[up]'                              Volume up
+`[down]'                            Volume down
+`k'                                 Keep window small
+`q'                                 Bury EAP buffers
+
+
+File: eap.info,  Node: Customising Emacs' AlsaPlayer,  Next: Mailing lists,  Prev: Keys and commands,  Up: Top
+
+9 Customising Emacs' AlsaPlayer
+*******************************
+
+To customise EAP via Emacs' popular Customize framework, issue the
+command:
+
+   `M-x customize-group RET eap RET'
+
+   *Note Customization: (emacs)Customization.
+
+
+File: eap.info,  Node: Mailing lists,  Next: TODOs,  Prev: Customising Emacs' AlsaPlayer,  Up: Top
+
+10 Mailing lists
+****************
+
+Support/development list
+
+     `https://mail.gna.org/listinfo/eap-dev/'
+
+     Please send bug reports, feature requests, hacks, patches and
+     feedback of any sort (good or bad), to this list.
+
+Subversion activity list
+
+     `https://mail.gna.org/listinfo/eap-commits/'
 
 
 
-File: eap.info,  Node: Keeping up to date - Mailing lists & TODOs,  Next: Footnotes,  Prev: Keys and commands,  Up: Top
+File: eap.info,  Node: TODOs,  Next: Known bugs and limitations,  Prev: Mailing lists,  Up: Top
 
-8 Keeping up to date - Mailing lists & TODOs
-********************************************
+11 TODOs
+********
 
-Stay up-to-date with developments by subscribing to the development
-mailing list (https://mail.gna.org/listinfo/eap-dev/).  Please send
-bug-reports, feature requests, hacks, patches, feedback of any sort
-(good or bad), to this list.
+Secondary music directory (and playlist directory)
 
-   Stay unnecessarily up-to-date by subscribing to the Subversion
-activity mailing list (https://mail.gna.org/listinfo/eap-commits/).
+     This would be useful in a case (such as mine) where my main
+     music directory is on a removable drive that I can't always be
+     bothered to switch on.  EAP should use secondary directories if
+     primary directories aren't found.
 
-   Emacs' AlsaPlayer's TODOs are listed in the Tasks
-(https://gna.org/task/?group=eap) section of the Gna! project site
-(https://gna.org/projects/eap/).
+Make column widths in playlist buffer customisable
+
+     My development machine accomodates about 120 columns in a
+     full-width buffer (and using a medium-sized font) so the column
+     widths I've chosen reflect that value.  Better (but harder) than
+     making the column widths user-configurable, would be some 'smart
+     sizing' routines, reflecting the number of columns available in
+     any given buffer.
+
+Scrobble song information to Last.FM
+
+     Scrobbling song information to http://last.fm.  Don't really
+     know where to begin on this one.
 
 
 
-File: eap.info,  Node: Footnotes,  Prev: Keeping up to date - Mailing lists & TODOs,  Up: Top
+File: eap.info,  Node: Known bugs and limitations,  Next: Possibly asked questions,  Prev: TODOs,  Up: Top
 
-9 Footnotes
-***********
+12 Known bugs and limitations
+*****************************
+
+If volume fade-out functionality is enabled and you pause playback
+(`SPC' in an EAP buffer or `M-x ap.' from anywhere), followed
+immediately by a command to skip to the next song in the current
+playlist (`> or [right]' in an EAP buffer or `M-x ap>' from
+anywhere), the volume is not properly restored.  Typing `=' in an EAP
+buffer, or `M-x ap=' from anywhere, usually corrects this situation.
+
+   Failure to properly restore the volume after a fade-out has been
+observed in other less easily identifiable situations, but these
+occasions are thankfully few.  If it does happen to you, the same fix
+(described above) applies.
+
+
+File: eap.info,  Node: Possibly asked questions,  Prev: Known bugs and limitations,  Up: Top
+
+13 Possibly asked questions
+***************************
+
+Does AlsaPlayer play Ogg Vorbis files?
+
+     The question should really be, does AlsaPlayer play mp3 files?
+     I didn't write AlsaPlayer (only the Emacs interface), but I
+     happen to know that it takes a pretty dim view of always playing
+     mp3s.  Even if you only play oggs
+     (http://www.fsf.org/news/playogg.html) occasionally you'll be
+     surprised how much you go up in its estimation.
+
+Why commit yourself to one particular back-end?
+
+     I like Alsplayer.  I like the fact that the designers thought to
+     include a text interface (no GUI) and it's command line
+     interface is especiialy clean and simple.
+
+     People are welcome to implement support for other players but
+     the name, Emacs' AlsaPlayer, is here to stay.
+
 
 
 
 Tag Table:
-Node: Top0
-Node: Technical overview434
-Node: Feature list1559
-Node: Obtaining Emacs' AlsaPlayer2386
-Node: FAQs3178
-Ref: FAQs-Footnote-15143
-Node: Installation6197
-Node: Installing AlsaPlayer6382
-Node: Installing Emacs' AlsaPlayer - eap.el7171
-Node: Usage8703
-Node: Keys and commands10462
-Node: Playlist/song position commands10858
-Node: Volume adjustment commands11457
-Node: Other commands11983
-Node: Commands only available in EAP buffers12885
-Node: Keeping up to date - Mailing lists & TODOs13531
-Node: Footnotes14269
+Node: Top708
+Node: Obtaining Emacs' AlsaPlayer1774
+Node: Music Without Jolts2351
+Node: Feature list5416
+Node: Brief technical overview6897
+Node: Installation8301
+Node: Installing AlsaPlayer8635
+Node: Installing Emacs' AlsaPlayer9410
+Node: Starting Emacs' AlsaPlayer10935
+Node: Emacs' AlsaPlayer Buffers12662
+Node: Keys and commands14765
+Node: Playlist/song position commands15190
+Node: Volume adjustment commands15776
+Node: Other commands16276
+Node: Commands only available in EAP buffers17110
+Node: Customising Emacs' AlsaPlayer17727
+Node: Mailing lists18068
+Node: TODOs18479
+Node: Known bugs and limitations19452
+Node: Possibly asked questions20248
 
 End Tag Table
-
-
-Local Variables:
-coding: iso-8859-1
-End:
