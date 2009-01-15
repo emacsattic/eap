@@ -84,16 +84,33 @@ Keys and commands
 @node Obtaining Emacs' AlsaPlayer, Music Without Jolts, Top, Top
 @chapter Obtaining Emacs' AlsaPlayer
 
-EAP is a @uref{https://gna.org/projects/eap/, project} kindly hosted by
-@uref{https://gna.org, Gna!}:
+EAP is a project kindly hosted by @uref{https://gna.org, Gna!}.
 
 @table @asis
 
-@item Latest stable release
+@item EAP home
 @ifinfo
 @sp 1
 @end ifinfo
-@uref{http://download.gna.org/eap/eap.el}
+@uref{http://home.gna.org/eap}
+
+Includes package download links as well as links to the manual (online, and in various formats).
+
+@item EAP download area
+@ifinfo
+@sp 1
+@end ifinfo
+@uref{http://download.gna.org/eap}
+
+Download EAP (packaged as a gzipped tarball or zip archive).
+
+@item EAP project page
+@ifinfo
+@sp 1
+@end ifinfo
+@uref{https://gna.org/projects/eap/}
+
+Mainly for co-developers and project members.
 
 @item Daily snapshot of latest SVN version
 @ifinfo
@@ -101,11 +118,15 @@ EAP is a @uref{https://gna.org/projects/eap/, project} kindly hosted by
 @end ifinfo
 @uref{http://svn.gna.org/daily/eap-snapshot.tar.gz}
 
+For Subversion users.
+
 @item Anonymous SVN over HTTP
 @ifinfo
 @sp 1
 @end ifinfo
 @samp{svn co http://svn.gna.org/svn/eap/trunk eap}
+
+For Subversion users.
 
 @item Anonymous SVN over SVN (TCP 3690)
 @ifinfo
@@ -113,7 +134,10 @@ EAP is a @uref{https://gna.org/projects/eap/, project} kindly hosted by
 @end ifinfo
 @samp{svn co svn://svn.gna.org/svn/eap/trunk eap}
 
+For Subversion users.
+
 @end table
+
 
 @c ################################ node ################################
 @node Music Without Jolts, Feature list, Obtaining Emacs' AlsaPlayer, Top
@@ -497,7 +521,8 @@ and @samp{*EAP Playlist*} by default.
 @multitable @columnfractions 0.2 0.4 0.4
 @headitem Key @tab Action @tab Global command
 @item @kbd{p} @tab Show current playlist @tab @kbd{M-x app}
-@item @kbd{m} @tab Show music directory @tab @kbd{M-x apm}
+@item @kbd{m} @tab Show music library @tab @kbd{M-x apm}
+@item @kbd{l} @tab Show playlist library @tab @kbd{M-x apl}
 @item @kbd{v} @tab Show current song @tab @kbd{M-x apv}
 @item @kbd{s} @tab Add current song to named playlist @tab @kbd{M-x aps}
 @item @kbd{i} @tab Toggle fade-in functionality @tab @kbd{M-x api}
@@ -557,13 +582,13 @@ or bad), to this list.
 @chapter TODOs
 
 @table @asis
-@item Secondary music directory (and playlist directory)
+@item Secondary music library location (and playlist library location)
 @ifinfo
 @sp 1
 @end ifinfo
-This would be useful in a case (such as mine) where my main music directory is on a
-removable drive that I can't always be bothered to switch on.  EAP should use secondary
-directories if primary directories aren't found.
+This would be useful in a case (such as mine) where my main music library is on a
+removable drive that I can't always be bothered to switch on.  EAP should use
+secondary libraries  if primary libraries aren't found.
 
 @item Make column widths in playlist buffer customisable
 @ifinfo

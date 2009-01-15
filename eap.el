@@ -8,7 +8,7 @@
 ;;;
 ;;; This file is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
-;;; the Free Software Foundation; either version 2, or (at your option)
+;;; the Free Software Foundation; either version 3, or (at your option)
 ;;; any later version.
 ;;;
 ;;; You should have received a copy of the GNU General Public License
@@ -18,13 +18,11 @@
 ;;;
 ;;; eap.el is not (yet) part of GNU Emacs.
 
-;;; Installation intructions can be found in the manual, available in
-;;; a number of formats:
+;;; Detailed installation and usage intructions are to be found in the
+;;; manual (available in HTML, Info, and plain text formats) or, if
+;;; you didn't receive the manual, at EAP's online home:
 ;;;
-;;;   ./eap.info
-;;;   ./eap-manual.txt
-;;;   ./eap-manual-html/index.html
-
+;;;  http://home.gna.org/eap/
 
 ;;; ensure dired keybindings are loaded
 (require 'eap-dired-keybindings)
@@ -109,7 +107,7 @@ this alist must be of the form (REGEXP . FACE)."
    (lambda (k)
      (format "%s %s" (propertize (car k) 'face 'bold) (cdr k)))
    '((">" . "next,") ("<" . "previous,") ("SPC" . "pause,") ("j" . "jump,") ("p" . "playlist,") ("m" . "music,")
-     ("v" . "view,") ("s" . "symlink,") ("0" . "mute,") ("-" . "soft,") ("=" . "full,") ("q" . "bury,") ("Q" . "quit"))
+     ("l" . "lists,") ("s" . "symlink,") ("0" . "mute,") ("-" . "soft,") ("=" . "full,") ("q" . "bury,") ("Q" . "quit"))
    " "))
 (defcustom eap-buffer-name "*EAP*"
   "Name of the AlsaPlayer process output buffer.  Choose a name
@@ -138,7 +136,7 @@ this alist must be of the form (REGEXP . FACE)."
 	;; fixed volume keys
 	("0"     . ap0) ("-" . ap-) ("=" . ap=) ;mute, soft & full volume
 	;; eap-to-dired keys
-	("m"     . apm) ("v" . apv) ("s" . aps) ;music-dir, view track & symlink track to playlist-library
+	("m"     . apm) ("l" . apl) ("v" . apv) ("s" . aps) ;music lib, playlist lib, view track & symlink track
 	;; other keys
 	("p"     . app) ("i" . api) ("o" . apo) ;playlist, toggle fade-in, toggle fade-out
 	;; functions only acccessible from within an EAP buffer
@@ -370,7 +368,6 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (remove "-------------- Current Track ------------"
 	(remove "-----------------------------------------"
 	  (remove ""
-	    ;; call-process-to-string is mine
 	    (split-string (call-process-to-string "alsaplayer --status") "\n")))))))
 
 (defun eap-alsaplayer-this-status (s)
@@ -381,10 +378,15 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 
 ;;; =========================================== eap to dired
-;;; no need to auto-load this as well as the alias (apm)
-(defun eap-dired-music-dir ()
+;;; no need to auto-load this as well as the alias 'apm'
+(defun eap-dired-music-lib ()
   (interactive)
   (dired-other-window eap-music-library))
+
+;;; no need to auto-load this as well as the alias 'apl'
+(defun eap-dired-playlist-lib ()
+  (interactive)
+  (dired-other-window eap-playlist-library))
 
 (defun eap-dired-current-track ()
   (interactive)
@@ -522,7 +524,9 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 ;;; dired function aliae
 ;;;###autoload
-(defalias 'apm 'eap-dired-music-dir)
+(defalias 'apm 'eap-dired-music-lib)
+;;;###autoload
+(defalias 'apl 'eap-dired-playlist-lib)
 (defalias 'apv 'eap-dired-current-track)
 (defalias 'aps 'eap-symlink-current-track)
 

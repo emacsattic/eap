@@ -1,0 +1,90 @@
+
+Greetings fellow Emacs user.
+
+Everything you need to know (including how to install EAP) is in the manual:
+
+ eap.html - manual in HTML format
+ eap.info - manual in Info format
+  eap.txt - manual in plain text format
+
+The remaining three .el files are the program.
+
+ eap.el
+ eap-autoloads.el
+ eap-dired-keybindings.el
+
+Quick installation instructions for the impatient
+=================================================
+(copied verbatim from the manual)
+
+On a Debian GNU/Linux system a minimal working AlsaPlayer requires that
+these two packages:
+
+     alsaplayer-common
+     alsaplayer-text
+
+and one of these:
+
+     alsaplayer-alsa
+     alsaplayer-esd
+     alsaplayer-jack
+     alsaplayer-nas
+     alsaplayer-oss
+
+be installed.
+
+   Choose the last package according to your audio output interface.
+AlsaPlayer is designed to work closely with the ALSA
+(http://www.alsa-project.org) system _when it's available_, i.e., it
+works perfectly well without it.
+
+   Test the text interface by issuing the command:
+
+   `alsaplayer -i text some-audio-file.ogg'
+
+EAP consists of three separate files; `eap.el',
+`eap-dired-keybindings.el' and `eap-autoloads.el'.  Ensure that all
+three files are located somehwere in your `load-path'.  For example,
+put them in the directory `~/elisp' and then add this line to your
+`~/.emacs':
+
+     (add-to-list 'load-path "~/elisp")
+
+   Next you must tell EAP the location of your music library, and where
+you would like to keep your playlists.  For example, add these lines to
+your ~/.emacs:
+
+     (setq eap-music-library
+           "~/my-music-library" ;default value "~/Music"
+
+           eap-playlist-library
+           "~/eap-playlists") ;default value "~/eap-playlist-library"
+
+   *Important note:* Don't make your playlist library a sub-directory
+of your music library!
+
+   EAP will create both directories for you if they don't exist.  On
+the other hand, if you are happy with the default locations you needn't
+add these lines to your `~/.emacs' file at all.
+
+   Finally, either add the line:
+
+     (require 'eap-autoloads) ;recommended on principle
+
+   or
+
+     (require 'eap)
+
+   to your `~/.emacs' file.
+
+   The first form defers loading of the package until you actually need
+it.  The second form will causes the package to be loaded at start time
+every time.
+
+   Save your `~/.emacs' file and restart Emacs, or issue the command:
+
+   `M-x load-file RET ~/.emacs RET'.
+
+
+
+Happy listening (and hacking)!

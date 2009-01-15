@@ -36,24 +36,44 @@ throughout the rest of this manual.
 1 Obtaining Emacs' AlsaPlayer
 *****************************
 
-EAP is a project (https://gna.org/projects/eap/) kindly hosted by Gna!
-(https://gna.org):
+EAP is a project kindly hosted by Gna! (https://gna.org).
 
-Latest stable release
+EAP home
 
-     `http://download.gna.org/eap/eap.el'
+     `http://home.gna.org/eap'
+
+     Includes package download links as well as links to the manual
+     (online, and in various formats).
+
+EAP download area
+
+     `http://download.gna.org/eap'
+
+     Download EAP (packaged as a gzipped tarball or zip archive).
+
+EAP project page
+
+     `https://gna.org/projects/eap/'
+
+     Mainly for co-developers and project members.
 
 Daily snapshot of latest SVN version
 
      `http://svn.gna.org/daily/eap-snapshot.tar.gz'
 
+     For Subversion users.
+
 Anonymous SVN over HTTP
 
      `svn co http://svn.gna.org/svn/eap/trunk eap'
 
+     For Subversion users.
+
 Anonymous SVN over SVN (TCP 3690)
 
      `svn co svn://svn.gna.org/svn/eap/trunk eap'
+
+     For Subversion users.
 
 
 2 Music Without Jolts
@@ -387,7 +407,8 @@ Key            Action                        Global command
 Key            Action                        Global command
 --------------------------------------------------------------------------- 
 `p'            Show current playlist         `M-x app'
-`m'            Show music directory          `M-x apm'
+`m'            Show music library            `M-x apm'
+`l'            Show playlist library         `M-x apl'
 `v'            Show current song             `M-x apv'
 `s'            Add current song to named     `M-x aps'
                playlist                      
@@ -436,12 +457,12 @@ Subversion activity list
 11 TODOs
 ********
 
-Secondary music directory (and playlist directory)
+Secondary music library location (and playlist library location)
 
      This would be useful in a case (such as mine) where my main music
-     directory is on a removable drive that I can't always be bothered
-     to switch on.  EAP should use secondary directories if primary
-     directories aren't found.
+     library is on a removable drive that I can't always be bothered to
+     switch on.  EAP should use secondary libraries  if primary
+     libraries aren't found.
 
 Make column widths in playlist buffer customisable
 

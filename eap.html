@@ -86,17 +86,32 @@ this manual.
 
 <h2 class="chapter">1 Obtaining Emacs' AlsaPlayer</h2>
 
-<p>EAP is a <a href="https://gna.org/projects/eap/">project</a> kindly hosted by
-<a href="https://gna.org">Gna!</a>:
+<p>EAP is a project kindly hosted by <a href="https://gna.org">Gna!</a>.
 
      <dl>
-<dt>Latest stable release<dd><a href="http://download.gna.org/eap/eap.el">http://download.gna.org/eap/eap.el</a>
+<dt>EAP home<dd><a href="http://home.gna.org/eap">http://home.gna.org/eap</a>
+
+     <p>Includes package download links as well as links to the manual (online, and in various formats).
+
+     <br><dt>EAP download area<dd><a href="http://download.gna.org/eap">http://download.gna.org/eap</a>
+
+     <p>Download EAP (packaged as a gzipped tarball or zip archive).
+
+     <br><dt>EAP project page<dd><a href="https://gna.org/projects/eap/">https://gna.org/projects/eap/</a>
+
+     <p>Mainly for co-developers and project members.
 
      <br><dt>Daily snapshot of latest SVN version<dd><a href="http://svn.gna.org/daily/eap-snapshot.tar.gz">http://svn.gna.org/daily/eap-snapshot.tar.gz</a>
 
+     <p>For Subversion users.
+
      <br><dt>Anonymous SVN over HTTP<dd>&lsquo;<samp><span class="samp">svn co http://svn.gna.org/svn/eap/trunk eap</span></samp>&rsquo;
 
+     <p>For Subversion users.
+
      <br><dt>Anonymous SVN over SVN (TCP 3690)<dd>&lsquo;<samp><span class="samp">svn co svn://svn.gna.org/svn/eap/trunk eap</span></samp>&rsquo;
+
+     <p>For Subversion users.
 
    </dl>
 
@@ -418,7 +433,8 @@ and &lsquo;<samp><span class="samp">*EAP Playlist*</span></samp>&rsquo; by defau
 
 <p><table summary=""><tr align="left"><th valign="top" width="20%">Key </th><th valign="top" width="40%">Action </th><th valign="top" width="40%">Global command
 <br></th></tr><tr align="left"><td valign="top" width="20%"><kbd>p</kbd> </td><td valign="top" width="40%">Show current playlist </td><td valign="top" width="40%"><kbd>M-x app</kbd>
-<br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>m</kbd> </td><td valign="top" width="40%">Show music directory </td><td valign="top" width="40%"><kbd>M-x apm</kbd>
+<br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>m</kbd> </td><td valign="top" width="40%">Show music library </td><td valign="top" width="40%"><kbd>M-x apm</kbd>
+<br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>l</kbd> </td><td valign="top" width="40%">Show playlist library </td><td valign="top" width="40%"><kbd>M-x apl</kbd>
 <br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>v</kbd> </td><td valign="top" width="40%">Show current song </td><td valign="top" width="40%"><kbd>M-x apv</kbd>
 <br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>s</kbd> </td><td valign="top" width="40%">Add current song to named playlist </td><td valign="top" width="40%"><kbd>M-x aps</kbd>
 <br></td></tr><tr align="left"><td valign="top" width="20%"><kbd>i</kbd> </td><td valign="top" width="40%">Toggle fade-in functionality </td><td valign="top" width="40%"><kbd>M-x api</kbd>
@@ -473,9 +489,9 @@ or bad), to this list.
 <h2 class="chapter">11 TODOs</h2>
 
      <dl>
-<dt>Secondary music directory (and playlist directory)<dd>This would be useful in a case (such as mine) where my main music directory is on a
-removable drive that I can't always be bothered to switch on.  EAP should use secondary
-directories if primary directories aren't found.
+<dt>Secondary music library location (and playlist library location)<dd>This would be useful in a case (such as mine) where my main music library is on a
+removable drive that I can't always be bothered to switch on.  EAP should use
+secondary libraries  if primary libraries aren't found.
 
      <br><dt>Make column widths in playlist buffer customisable<dd>
 My development machine accomodates about 120 columns in a full-width buffer (and using a

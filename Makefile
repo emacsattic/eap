@@ -1,6 +1,21 @@
+program := eap.el eap-autoloads.el eap-dired-keybindings.el 
 texinfo-src := eap.texi
+manuals := eap.html eap.info eap.txt
 
-manuals : eap.html eap.info eap.txt
+all : manuals packages
+
+all-plus-upload : manuals packages upload-packages
+
+manuals : $(manuals)
+
+packages : README $(program) $(manuals)
+	tar --verbose --create --auto-compress --totals --file eap.tgz \
+	  README $(program) $(manuals)
+	zip eap README $(program) $(manuals)
+
+upload-packages :
+	scp eap.tgz sebyte@download.gna.org:/upload/eap/
+	scp eap.zip sebyte@download.gna.org:/upload/eap/
 
 # single HTML file
 eap.html : $(texinfo-src)
@@ -13,4 +28,20 @@ eap.info : $(texinfo-src)
 # single plain text file 
 eap.txt : $(texinfo-src)
 	makeinfo --no-headers --plaintext -o $@ $(texinfo-src)
+
+# Deleted old contents of my download area (eap.el) like so
+#
+#  $ mkdir tmp
+#  $ cp eap.tgz tmp
+#  $ cd tmp
+#  $ rsync --verbose --rsh="ssh" --recursive --delete . sebyte@download.gna.org:/upload/eap/
+#  building file list ... done
+#  deleting eap.el
+#  deleting HEADER.html
+#  eap.tgz
+#  sent 203 bytes  received 198 bytes  160.40 bytes/sec
+#  total size is 17622  speedup is 43.95
+#
+# This is clearly not the right way to do it but it worled.  Deletion
+# of HEADER.html doesn't seem to have hurt.
 

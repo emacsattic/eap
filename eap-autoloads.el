@@ -8,7 +8,7 @@
 ;;;
 ;;; This file is free software; you can redistribute it and/or modify
 ;;; it under the terms of the GNU General Public License as published by
-;;; the Free Software Foundation; either version 2, or (at your option)
+;;; the Free Software Foundation; either version 3, or (at your option)
 ;;; any later version.
 ;;;
 ;;; You should have received a copy of the GNU General Public License
@@ -21,9 +21,10 @@
 (require 'eap-dired-keybindings)
 
 (autoload 'eap                          "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
-(autoload 'apm                          "eap" "Visit Emacs' AlsaPlayer's music directory in Dired" t)
-(autoload 'dired-eap-replace-marked     "eap" "Dired access to Emacs' AlsaPlayer" t)
-(autoload 'dired-eap-enqueue-marked     "eap" "Dired access to Emacs' AlsaPlayer" t)
-(autoload 'dired-eap-symlink-to-playdir "eap" "Dired access to Emacs' AlsaPlayer" t)
+(autoload 'apm                          "eap" "Visit EAP music library in Dired" t)
+(autoload 'apl                          "eap" "Visit EAP playlist library in Dired" t)
+(autoload 'dired-eap-replace-marked     "eap" "Dired access to EAP" t)
+(autoload 'dired-eap-enqueue-marked     "eap" "Dired access to EAP" t)
+(autoload 'dired-eap-symlink-to-playdir "eap" "Dired access to EAP" t)
 
 (provide 'eap-autoloads)
