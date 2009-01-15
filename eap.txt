@@ -1,20 +1,27 @@
-This is eap.info, produced by makeinfo version 4.11 from eap.texi.
+Table of Contents
+*****************
 
-This manual (last modified: <15/01/2009 18:18:29 UTC>) documents Emacs'
-AlsaPlayer version 0.12 (Gaza Remembered).
+Emacs' AlsaPlayer - Music Without Jolts
+1 Obtaining Emacs' AlsaPlayer
+2 Music Without Jolts
+3 Feature list
+4 Brief technical overview
+5 Installation
+  5.1 Installing AlsaPlayer
+  5.2 Installing Emacs' AlsaPlayer
+6 Starting Emacs' AlsaPlayer
+7 Emacs' AlsaPlayer Buffers
+8 Keys and commands
+  8.1 Playlist/song position commands
+  8.2 Volume adjustment commands
+  8.3 Other commands
+  8.4 Commands only available in EAP buffers
+9 Customising Emacs' AlsaPlayer
+10 Mailing lists
+11 TODOs
+12 Known bugs and limitations
+13 Possibly asked questions
 
-   Copyright (C) 2007,2008,2009 Sebastian Tennant <sebyte@gmail.com>.
-
-     Permission is granted to copy, distribute and/or modify this
-     document under the terms of the GNU Free Documentation License,
-     Version 1.3 or any later version published by the Free Software
-     Foundation, with one Invariant Section; 'Music Without Jolts', no
-     Front-Cover Texts and no Back-Cover Texts.  A copy of the license
-     is included in the section entitled 'GNU Free Documentation
-     License'.
-
-
-File: eap.info,  Node: Top,  Next: Obtaining Emacs' AlsaPlayer,  Prev: (dir),  Up: (dir)
 
 Emacs' AlsaPlayer - Music Without Jolts
 ***************************************
@@ -25,39 +32,6 @@ AlsaPlayer (http://www.alsaplayer.org) PCM audio player.
 
    Emacs' AlsaPlayer is referred to as "EAP" (pronounced 'eep')
 throughout the rest of this manual.
-
-* Menu:
-
-* Obtaining Emacs' AlsaPlayer::
-* Music Without Jolts::
-* Feature list::
-* Brief technical overview::
-* Installation::
-* Starting Emacs' AlsaPlayer::
-* Emacs' AlsaPlayer Buffers::
-* Keys and commands::
-* Customising Emacs' AlsaPlayer::
-* Mailing lists::
-* TODOs::
-* Known bugs and limitations::
-* Possibly asked questions::
-
- --- The Detailed Node Listing ---
-
-Installation
-
-* Installing AlsaPlayer::
-* Installing Emacs' AlsaPlayer::
-
-Keys and commands
-
-* Playlist/song position commands::
-* Volume adjustment commands::
-* Other commands::
-* Commands only available in EAP buffers::
-
-
-File: eap.info,  Node: Obtaining Emacs' AlsaPlayer,  Next: Music Without Jolts,  Prev: Top,  Up: Top
 
 1 Obtaining Emacs' AlsaPlayer
 *****************************
@@ -81,9 +55,6 @@ Anonymous SVN over SVN (TCP 3690)
 
      `svn co svn://svn.gna.org/svn/eap/trunk eap'
 
-
-
-File: eap.info,  Node: Music Without Jolts,  Next: Feature list,  Prev: Obtaining Emacs' AlsaPlayer,  Up: Top
 
 2 Music Without Jolts
 *********************
@@ -142,9 +113,6 @@ can only be described as an immovable jolt to contend with.
 sake of the environment, _and not for any other reason_, has been known
 to work in a few well known (though poorly documented) cases.
 
-
-File: eap.info,  Node: Feature list,  Next: Brief technical overview,  Prev: Music Without Jolts,  Up: Top
-
 3 Feature list
 **************
 
@@ -183,9 +151,6 @@ File: eap.info,  Node: Feature list,  Next: Brief technical overview,  Prev: Mus
      framework.  *Note Customising Emacs' AlsaPlayer::.
 
 
-
-File: eap.info,  Node: Brief technical overview,  Next: Installation,  Prev: Feature list,  Up: Top
-
 4 Brief technical overview
 **************************
 
@@ -218,22 +183,11 @@ Emacs' AlsaPlayer
      symbolic links to these directories.
 
 
-
-File: eap.info,  Node: Installation,  Next: Starting Emacs' AlsaPlayer,  Prev: Brief technical overview,  Up: Top
-
 5 Installation
 **************
 
 EAP is an Emacs interface to AlsaPlayer (http://www.alsaplayer.org) so,
 not surprisingly, it won't work without it.
-
-* Menu:
-
-* Installing AlsaPlayer::
-* Installing Emacs' AlsaPlayer::
-
-
-File: eap.info,  Node: Installing AlsaPlayer,  Next: Installing Emacs' AlsaPlayer,  Prev: Installation,  Up: Installation
 
 5.1 Installing AlsaPlayer
 =========================
@@ -262,9 +216,6 @@ works perfectly well without it.
    Test the text interface by issuing the command:
 
    `alsaplayer -i text some-audio-file.ogg'
-
-
-File: eap.info,  Node: Installing Emacs' AlsaPlayer,  Prev: Installing AlsaPlayer,  Up: Installation
 
 5.2 Installing Emacs' AlsaPlayer
 ================================
@@ -312,9 +263,6 @@ every time.
 
    `M-x load-file RET ~/.emacs RET'.
 
-
-File: eap.info,  Node: Starting Emacs' AlsaPlayer,  Next: Emacs' AlsaPlayer Buffers,  Prev: Installation,  Up: Top
-
 6 Starting Emacs' AlsaPlayer
 ****************************
 
@@ -358,9 +306,6 @@ simply as "marked" below.
      Add marked to named playlist.  This command will not start
      AlsaPlayer or have any effect on the current playlist if
      AlsaPlayer is already running.
-
-
-File: eap.info,  Node: Emacs' AlsaPlayer Buffers,  Next: Keys and commands,  Prev: Starting Emacs' AlsaPlayer,  Up: Top
 
 7 Emacs' AlsaPlayer Buffers
 ***************************
@@ -411,24 +356,11 @@ and commands::.
      `p' to update it.
 
 
-
-File: eap.info,  Node: Keys and commands,  Next: Customising Emacs' AlsaPlayer,  Prev: Emacs' AlsaPlayer Buffers,  Up: Top
-
 8 Keys and commands
 *******************
 
 The same set of key commands listed below are available in both EAP
 buffers; `*EAP*' and `*EAP Playlist*' by default.
-
-* Menu:
-
-* Playlist/song position commands::
-* Volume adjustment commands::
-* Other commands::
-* Commands only available in EAP buffers::
-
-
-File: eap.info,  Node: Playlist/song position commands,  Next: Volume adjustment commands,  Prev: Keys and commands,  Up: Keys and commands
 
 8.1 Playlist/song position commands
 ===================================
@@ -440,9 +372,6 @@ Key                      Action                   Global command
 `SPC'                    Pause/Play               `M-x ap.'
 `j'                      Jump to song             `M-x apj'
 
-
-File: eap.info,  Node: Volume adjustment commands,  Next: Other commands,  Prev: Playlist/song position commands,  Up: Keys and commands
-
 8.2 Volume adjustment commands
 ==============================
 
@@ -451,9 +380,6 @@ Key            Action                        Global command
 `0'            Volume mute                   `M-x ap0'
 `-'            Volume soft                   `M-x ap-'
 `='            Volume full                   `M-x ap='
-
-
-File: eap.info,  Node: Other commands,  Next: Commands only available in EAP buffers,  Prev: Volume adjustment commands,  Up: Keys and commands
 
 8.3 Other commands
 ==================
@@ -470,9 +396,6 @@ Key            Action                        Global command
                functionality                 
 `Q'            Quit EAP                      `M-x eaq'
 
-
-File: eap.info,  Node: Commands only available in EAP buffers,  Prev: Other commands,  Up: Keys and commands
-
 8.4 Commands only available in EAP buffers
 ==========================================
 
@@ -485,9 +408,6 @@ Key                                  Action
 `k'                                  Keep window small
 `q'                                  Bury EAP buffers
 
-
-File: eap.info,  Node: Customising Emacs' AlsaPlayer,  Next: Mailing lists,  Prev: Keys and commands,  Up: Top
-
 9 Customising Emacs' AlsaPlayer
 *******************************
 
@@ -497,9 +417,6 @@ command:
    `M-x customize-group RET eap RET'
 
    *Note Customization: (emacs)Customization.
-
-
-File: eap.info,  Node: Mailing lists,  Next: TODOs,  Prev: Customising Emacs' AlsaPlayer,  Up: Top
 
 10 Mailing lists
 ****************
@@ -515,9 +432,6 @@ Subversion activity list
 
      `https://mail.gna.org/listinfo/eap-commits/'
 
-
-
-File: eap.info,  Node: TODOs,  Next: Known bugs and limitations,  Prev: Mailing lists,  Up: Top
 
 11 TODOs
 ********
@@ -544,9 +458,6 @@ Scrobble song information to Last.FM
      where to begin on this one.
 
 
-
-File: eap.info,  Node: Known bugs and limitations,  Next: Possibly asked questions,  Prev: TODOs,  Up: Top
-
 12 Known bugs and limitations
 *****************************
 
@@ -561,9 +472,6 @@ the volume is not properly restored.  Typing `=' in an EAP buffer, or
 observed in other less easily identifiable situations, but these
 occasions are thankfully few.  If it does happen to you, the same fix
 (described above) applies.
-
-
-File: eap.info,  Node: Possibly asked questions,  Prev: Known bugs and limitations,  Up: Top
 
 13 Possibly asked questions
 ***************************
@@ -587,28 +495,3 @@ Why commit yourself to one particular back-end?
      name, Emacs' AlsaPlayer, is here to stay.
 
 
-
-
-Tag Table:
-Node: Top682
-Node: Obtaining Emacs' AlsaPlayer1748
-Node: Music Without Jolts2325
-Node: Feature list5390
-Node: Brief technical overview6865
-Node: Installation8264
-Node: Installing AlsaPlayer8598
-Node: Installing Emacs' AlsaPlayer9373
-Node: Starting Emacs' AlsaPlayer10898
-Node: Emacs' AlsaPlayer Buffers12625
-Node: Keys and commands14718
-Node: Playlist/song position commands15143
-Node: Volume adjustment commands15742
-Node: Other commands16248
-Node: Commands only available in EAP buffers17049
-Node: Customising Emacs' AlsaPlayer17675
-Node: Mailing lists18016
-Node: TODOs18427
-Node: Known bugs and limitations19400
-Node: Possibly asked questions20196
-
-End Tag Table

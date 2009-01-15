@@ -7,7 +7,7 @@
 @set VERSION 0.12
 @set CODENAME Gaza Remembered
 @set COPYRIGHT-YEARS 2007,2008,2009
-@set LAST-MODIFIED last modified: <14/01/2009 10:53:26 UTC>
+@set LAST-MODIFIED last modified: <15/01/2009 18:18:29 UTC>
 @c %**end of header
 
 @copying
@@ -30,10 +30,12 @@ section entitled 'GNU Free Documentation License'.
 @author @value{AUTHOR}
 @end titlepage
 
+@c ignored in Info output
 @contents
 
 @c ################################ node ################################
 @node Top, Obtaining Emacs' AlsaPlayer, (dir), (dir)
+
 @ifnottex
 @top Emacs' AlsaPlayer - Music Without Jolts
 This manual (@value{LAST-MODIFIED}) documents Emacs' AlsaPlayer version @value{VERSION}
