@@ -6,6 +6,7 @@ Everything you need to know (including how to install EAP) is in the manual:
  eap.html - manual in HTML format
  eap.info - manual in Info format
   eap.txt - manual in plain text format
+ eap.texi - manual Texinfo source (please provide patches against this)
 
 The remaining three .el files are the program.
 

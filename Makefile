@@ -1,4 +1,4 @@
-program := eap.el eap-autoloads.el eap-dired-keybindings.el 
+program := eap.el eap-autoloads.el eap-dired-keybindings.el
 texinfo-src := eap.texi
 manuals := eap.html eap.info eap.txt
 
@@ -8,10 +8,10 @@ all-plus-upload : manuals packages upload-packages
 
 manuals : $(manuals)
 
-packages : README $(program) $(manuals)
+packages : README $(program) $(texinfo-src) $(manuals)
 	tar --verbose --create --auto-compress --totals --file eap.tgz \
-	  README $(program) $(manuals)
-	zip eap README $(program) $(manuals)
+	  README $(program) $(texinfo-src) $(manuals)
+	zip eap README $(program) $(texinfo-src) $(manuals)
 
 upload-packages :
 	scp eap.tgz sebyte@download.gna.org:/upload/eap/
