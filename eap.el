@@ -24,8 +24,9 @@
 ;;;
 ;;;  http://home.gna.org/eap/
 
-;;; ensure dired keybindings are loaded
+;;; requires
 (require 'eap-dired-keybindings)
+(require 'comint)
 
 ;;; =========================================== defvars/defcustoms
 (defgroup EAP nil "Emacs' AlsaPlayer - Music Without Jolts" :group 'multimedia :version "22.2.1")
@@ -463,7 +464,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 				     (truncate-string-to-width album 28 nil nil t)
 				     (truncate-string-to-width song 52 nil nil t)
 				     qpos)))
-		   (incf qpos))
+		   (setq qpos (1+ qpos)))
 		eap-playlist))
 	(goto-char (point-min))
 	;; now place '*' next to current song, remembering that
