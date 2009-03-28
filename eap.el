@@ -271,10 +271,13 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 
 ;;; =========================================== file management
 (defun eap-check-file-suffix (str)
-  (or (equal (substring str -4) ".mp3")
-      (equal (substring str -4) ".MP3")
-      (equal (substring str -4) ".ogg")
-      (equal (substring str -4) ".OGG")))
+  (or (string= (substring str -4) ".mp3")
+      (string= (substring str -4) ".MP3")
+      (string= (substring str -4) ".ogg")
+      (string= (substring str -4) ".OGG")
+      (string= (substring str -4) ".wav")
+      (string= (substring str -4) ".WAV")
+      ))
 
 (defun eap-marked-check (files)
   (apply 'nconc
