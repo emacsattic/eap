@@ -20,11 +20,11 @@
 
 (require 'eap-dired-keybindings)
 
-(autoload 'eap                          "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
-(autoload 'apm                          "eap" "Visit EAP music library in Dired" t)
-(autoload 'apl                          "eap" "Visit EAP playlist library in Dired" t)
-(autoload 'dired-eap-replace-marked     "eap" "Dired access to EAP" t)
-(autoload 'dired-eap-enqueue-marked     "eap" "Dired access to EAP" t)
-(autoload 'dired-eap-symlink-to-playdir "eap" "Dired access to EAP" t)
+(autoload 'eap                                   "eap" "Emacs' AlsaPlayer - Music Without Jolts" t)
+(autoload 'apm                                   "eap" "Visit EAP music library in Dired" t)
+(autoload 'apl                                   "eap" "Visit EAP playlist library in Dired" t)
+(autoload 'dired-eap-replace-marked              "eap" "Dired access to EAP" t)
+(autoload 'dired-eap-enqueue-marked              "eap" "Dired access to EAP" t)
+(autoload 'dired-eap-symlink-to-playlist-library "eap" "Dired access to EAP" t)
 
 (provide 'eap-autoloads)

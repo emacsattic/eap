@@ -25,6 +25,6 @@
      (define-key dired-mode-map "\M-p" dired-eap)
      (define-key dired-mode-map "\M-pp" 'dired-eap-replace-marked)
      (define-key dired-mode-map "\M-pq" 'dired-eap-enqueue-marked)
-     (define-key dired-mode-map "\M-ps" 'dired-eap-symlink-to-playdir)))
+     (define-key dired-mode-map "\M-ps" 'dired-eap-symlink-to-playlist-library)))
 
 (provide 'eap-dired-keybindings)
