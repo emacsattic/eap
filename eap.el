@@ -303,35 +303,42 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 ;;; =========================================== do what I mean
 ;;; start a new alsaplayer process, add to an existing playlist or start a new playlist
 (defun eap-dwim (files enqueue-flag)
-  (set-buffer (get-buffer-create eap-buffer-name))
-  (unless (equal major-mode "eap-mode") (eap-mode))
-  ;; go alsaplayer go
   (if (not (eap-running-p))
-      (progn
-	(erase-buffer)
-	(if (not eap-alsa-device)
-	    (display-buffer (apply 'make-comint-in-buffer "EAP" eap-buffer-name
-				   "alsaplayer" nil "-i" "text" files))
-	  (display-buffer (apply 'make-comint-in-buffer "EAP" eap-buffer-name
-				 "alsaplayer" nil "-i" "text"
-				 "-d" (concat "hw:" (number-to-string eap-alsa-device)) files)))
-	(eap-shrink-window)
+      (let ((alsaplayer-command-sexp
+             (if eap-alsa-device
+                 '(apply 'make-comint-in-buffer "EAP" eap-buffer-name
+                         "alsaplayer" nil "-i" "text"
+                         "-d" (concat "hw:" (number-to-string eap-alsa-device)) files)
+               '(apply 'make-comint-in-buffer "EAP" eap-buffer-name
+                       "alsaplayer" nil "-i" "text" files))))
+        ;; arrange windows
+        (delete-other-windows)
+        (split-window-vertically)
+        (other-window 1) ; always the bottom window
+        (switch-to-buffer (get-buffer-create eap-buffer-name))
+        (erase-buffer)
+        (eap-shrink-window)
+        (unless (equal major-mode "eap-mode") (eap-mode))
+        ;; start alsaplayer process
+        (eval alsaplayer-command-sexp)
 	;;; set up a simple sentinel
-	(set-process-sentinel
-	 (get-buffer-process eap-buffer-name)
-	 (lambda (proc ev)
-	   (setq ev (substring ev 0 6)) ;remove the newline
-	   (and (equal ev "finish")
-		(message "AlsaPlayer process ended cleanly, current playlist saved."))
-	   (and (member ev '("killed" "exited"))
-		(message "AlsaPlayer process ended abruptly, current playlist not saved.")))))
+        (set-process-sentinel
+         (get-buffer-process eap-buffer-name)
+         (lambda (proc ev)
+           (setq ev (substring ev 0 6)) ;remove the newline
+           (and (equal ev "finish")
+                (message "AlsaPlayer process ended cleanly, current playlist saved."))
+           (and (member ev '("killed" "exited"))
+                (message "AlsaPlayer process ended abruptly, current playlist not saved.")
+                )))
+        (other-window 1)) ; return to original window
     (progn
       (if enqueue-flag
-	  (eap-call-alsaplayer "enqueue" files "Added to play queue.")
-	(progn
-	  (when eap-volume-fade-out-flag (eap-volume-fade-out))
-	  (eap-call-alsaplayer "replace" files "Started new play queue.")
-	  (eap-volume-change eap-volume-restore))))))
+          (eap-call-alsaplayer "enqueue" files "Added to play queue.")
+        (progn
+          (when eap-volume-fade-out-flag (eap-volume-fade-out))
+          (eap-call-alsaplayer "replace" files "Started new play queue.")
+          (eap-volume-change eap-volume-restore))))))
 
 ;;; top level entry to eap
 ;;;###autoload
@@ -339,12 +346,18 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
   "Emacs' AlsaPlayer - Music Without Jolts"
   (interactive)
   (if (eap-running-p)
-      ;; just pop to EAP buffer if already running
-      (progn (pop-to-buffer eap-buffer-name) (eap-shrink-window))
+      ;; display EAP buffer and switch to it
+      (progn
+        (delete-other-windows)
+        (split-window-vertically)
+        (other-window 1)
+        (switch-to-buffer eap-buffer-name)
+        (eap-shrink-window))
     ;; else...
     (progn
       (if (and (file-readable-p "~/.alsaplayer/alsaplayer.m3u")
-	       (not (equal (elt (file-attributes "~/.alsaplayer/alsaplayer.m3u") 7) 0))
+	       (not ; zero length
+                (equal (elt (file-attributes "~/.alsaplayer/alsaplayer.m3u") 7) 0))
 	       (y-or-n-p "Continue where you left off? "))
 	  (progn
 	    ;; set eap-playlist variable to file contents, and go...
@@ -354,7 +367,9 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	    (eap-dwim nil nil))
 	;; just bring up music directory in Dired
 	(if (file-accessible-directory-p eap-music-library)
-	    (dired eap-music-library)
+	    (progn
+              (dired eap-music-library)
+              (delete-other-windows))
 	  (message "Music directory (%s) not found or inaccessible." eap-music-library)
 	)))))
 
@@ -390,7 +405,8 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 ;;; no need to auto-load this as well as the alias 'apl'
 (defun eap-dired-playlist-lib ()
   (interactive)
-  (dired-other-window eap-playlist-library))
+  (dired eap-playlist-library)
+  (delete-other-windows))
 
 (defun eap-dired-current-track ()
   (interactive)
@@ -442,7 +458,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
     (dired-other-window eap-playlist-library)
     (other-window 1)
     (let ((default-directory eap-playlist-library))
-      (dired-do-symlink))))
+      (dired-do-relsymlink))))
 
 
 ;;; =========================================== other
@@ -452,7 +468,7 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
       (progn
 	(switch-to-buffer eap-playlist-buffer-name)
 	(unless (equal major-mode "eap-playlist-mode") (eap-playlist-mode))
-	(delete-other-windows)		;this is needed for some reason
+	(delete-other-windows)
 	(when buffer-read-only (toggle-read-only))
 	(erase-buffer)
 	(insert (format "\n%28s | %28s | %52s | %3s\n" "Artist" "Album" "Track file name" "Pos"))
@@ -479,7 +495,10 @@ Emacs' AlsaPlayer - \"Music Without Jolts\"
 	  (re-search-forward (substring (eap-alsaplayer-current-song) 0 search-substring-length) nil nil))
 	(end-of-line) (insert "*")
 	(toggle-read-only)
-	(pop-to-buffer eap-buffer-name)		;return to *EAP*
+        ;; now do *EAP* buffer
+        (split-window-vertically)
+        (other-window 1)
+        (switch-to-buffer eap-buffer-name)
 	(eap-shrink-window))
     (message "Emacs' AlsaPlayer isn't running")))
 
